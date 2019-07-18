@@ -6,7 +6,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class TitleBar extends StatefulWidget {
   final int days;
-  TitleBar({this.days});
+  final darkMode;
+  TitleBar({this.days, this.darkMode});
 
   @override
   State<StatefulWidget> createState() {

@@ -17,7 +17,7 @@ class ResusableCode {
   }
 
   double percentageToNumber(BuildContext context, String val, bool height) {
-    int no = int.parse(val.substring(0, val.length - 1));
+    double no = double.parse(val.substring(0, val.length - 1));
     if (height) {
       return ((no / 100) * MediaQuery.of(context).size.height);
     } else {
