@@ -29,6 +29,8 @@ dependencies:
   local_auth: ^0.5.2+3
   battery: ^0.3.0+5
   intl: ^0.15.8
+  fluttery_audio: ^0.0.4
+
 
 
 

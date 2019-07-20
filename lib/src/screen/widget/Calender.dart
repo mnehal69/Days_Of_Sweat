@@ -2,17 +2,21 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import './../widget/new_day.dart';
+import './../widget/Day.dart';
 
 class Calender extends StatefulWidget {
-  final selectedDay, selectedMonth, selectedYear, darkMode;
+  final selectedDay, selectedMonth, selectedYear, darkMode, show;
 
   Calender(
-      {this.selectedDay, this.selectedMonth, this.selectedYear, this.darkMode});
+      {this.selectedDay,
+      this.selectedMonth,
+      this.selectedYear,
+      this.darkMode,
+      this.show});
 
   @override
   State<StatefulWidget> createState() {
-    return CalenderState();
+    return CalenderState(clicked: this.show);
   }
 }
 
@@ -21,7 +25,10 @@ class CalenderState extends State<Calender> {
   var dayList = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   var selectedRow = [];
   var finish = [1, 10, 9, 16, 21, 27];
-
+  var clicked;
+  var clickedcounter = 0;
+  var changed = false;
+  CalenderState({this.clicked});
   @override
   void initState() {
     super.initState();
@@ -51,6 +58,7 @@ class CalenderState extends State<Calender> {
             "columnSelected": false,
             "heading": false,
             "empty": true,
+            "show": false,
           };
         } else if (i == 5) {
           rowJson = {
@@ -62,6 +70,7 @@ class CalenderState extends State<Calender> {
             "heading": true,
             "weekday": "",
             "empty": false,
+            "show": false,
           };
         } else {
           if (widget.selectedDay == daycounter) {
@@ -76,7 +85,9 @@ class CalenderState extends State<Calender> {
             "heading": false,
             "weekday": widget.selectedDay == daycounter ? dayList[k] : "",
             "empty": false,
+            "show": clicked && finish.contains(daycounter) ? true : false,
           };
+          //print("dayCounter: $daycounter + clicked: $clicked + contain:${finish.contains(daycounter)} =  ${clicked && finish.contains(daycounter)}");
           daycounter++;
         }
         columnList.add(rowJson);
@@ -97,113 +108,98 @@ class CalenderState extends State<Calender> {
     //print(listOfDays.toString());
   }
 
-  buildRows(result, dark) {
-    return TableRow(children: [
-      Day(
-        day: result[0]["day"],
-        finish: result[0]["finish"],
-        columnSelected: result[0]["columnSelected"],
-        heading: result[0]["heading"],
-        rowSelected: result[0]["rowSelected"],
-        selected: result[0]["selected"],
-        weekday: result[0]["weekday"],
-        empty: result[0]["empty"],
-        darkmode: dark,
-      ),
-      Day(
-        day: result[1]["day"],
-        finish: result[1]["finish"],
-        columnSelected: result[1]["columnSelected"],
-        heading: result[1]["heading"],
-        rowSelected: result[1]["rowSelected"],
-        selected: result[1]["selected"],
-        weekday: result[1]["weekday"],
-        empty: result[1]["empty"],
-        darkmode: dark,
-      ),
-      Day(
-        day: result[2]["day"],
-        finish: result[2]["finish"],
-        columnSelected: result[2]["columnSelected"],
-        heading: result[2]["heading"],
-        rowSelected: result[2]["rowSelected"],
-        selected: result[2]["selected"],
-        weekday: result[2]["weekday"],
-        empty: result[2]["empty"],
-        darkmode: dark,
-      ),
-      Day(
-        day: result[3]["day"],
-        finish: result[3]["finish"],
-        columnSelected: result[3]["columnSelected"],
-        heading: result[3]["heading"],
-        rowSelected: result[3]["rowSelected"],
-        selected: result[3]["selected"],
-        weekday: result[3]["weekday"],
-        empty: result[3]["empty"],
-        darkmode: dark,
-      ),
-      Day(
-        day: result[4]["day"],
-        finish: result[4]["finish"],
-        columnSelected: result[4]["columnSelected"],
-        heading: result[4]["heading"],
-        rowSelected: result[4]["rowSelected"],
-        selected: result[4]["selected"],
-        weekday: result[4]["weekday"],
-        empty: result[4]["empty"],
-        darkmode: dark,
-      ),
-      Day(
-        day: result[5]["day"],
-        finish: result[5]["finish"],
-        columnSelected: result[5]["columnSelected"],
-        heading: result[5]["heading"],
-        rowSelected: result[5]["rowSelected"],
-        selected: result[5]["selected"],
-        weekday: result[5]["weekday"],
-        empty: result[5]["empty"],
-        darkmode: dark,
-      ),
-      Day(
-        day: result[6]["day"],
-        finish: result[6]["finish"],
-        columnSelected: result[6]["columnSelected"],
-        heading: result[6]["heading"],
-        rowSelected: result[6]["rowSelected"],
-        selected: result[6]["selected"],
-        empty: result[5]["empty"],
-        darkmode: dark,
-      ),
-    ]);
+  showDoneDays() {
+    for (int i = 0; i < listOfDays.length; i++) {
+      for (int j = 0; j < 7; j++) {
+        if (finish.contains(listOfDays[i][j]["day"])) {
+          listOfDays[i][j]["show"] = this.clicked;
+        } else {
+          listOfDays[i][j]["show"] = false;
+        }
+      }
+    }
+  }
+
+  click(day) {
+    // print("Clicking");
+    if (finish.contains(day)) {
+      if (clickedcounter == 0) {
+        setState(() {
+          this.clicked = true;
+          this.clickedcounter++;
+        });
+      } else {
+        setState(() {
+          this.clicked = false;
+          this.clickedcounter = 0;
+        });
+      }
+      showDoneDays();
+    }
+  }
+
+  selectedChange(row, column, cellTitle, empty) {
+    //print("title:$cellTitle + dayList:${dayList[column].substring(0, 1)}= ${cellTitle.toString().contains(dayList[column].substring(0, 1))}");
+    if (!cellTitle.toString().contains(dayList[column].substring(0, 1)) &&
+        !empty) {
+      for (int i = 0; i < listOfDays.length; i++) {
+        for (int j = 0; j < 7; j++) {
+          listOfDays[i][j]["selected"] = false;
+          listOfDays[i][j]["rowSelected"] = false;
+          listOfDays[i][j]["columnSelected"] = false;
+          listOfDays[i][j]["weekday"] = "";
+        }
+      }
+
+      for (int i = 0; i < listOfDays.length; i++) {
+        if (i == row) {
+          for (int j = 0; j < 7; j++) {
+            listOfDays[i][j]["rowSelected"] = true;
+          }
+        } else {
+          listOfDays[i][column]["columnSelected"] = true;
+        }
+      }
+      listOfDays[row][column]["selected"] = true;
+      listOfDays[row][column]["weekday"] = dayList[column];
+      setState(() {});
+    }
+  }
+
+  buildTableRows(result, dark, row, column) {
+    return InkWell(
+        onDoubleTap: () => this.click(result["day"]),
+        onTap: () =>
+            this.selectedChange(row, column, result["day"], result["empty"]),
+        child: Day(
+          day: result["day"],
+          finish: result["finish"],
+          columnSelected: result["columnSelected"],
+          heading: result["heading"],
+          rowSelected: result["rowSelected"],
+          selected: result["selected"],
+          weekday: result["weekday"],
+          empty: result["empty"],
+          darkmode: dark,
+          show: result["show"],
+        ));
+  }
+
+  buildRows(result, dark, rowIndex) {
+    return TableRow(
+      children: List.generate(result.length,
+          (index) => buildTableRows(result[index], dark, rowIndex, index)),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     var dark = widget.darkMode;
     //print("WELCOME\n ${listOfDays[2][1]["day"]}");
+    //print(this.clicked);
     return Table(
-      children: List.generate(
-          listOfDays.length, (index) => buildRows(listOfDays[index], dark)),
-      // TableRow(children: [
-      //   Day(day: "01", finish: true),
-      //   Day(day: "02"),
-      //   Day(day: "03", finish: true, columnSelected: true),
-      //   Day(day: "04"),
-      //   Day(day: "05"),
-      //   Day(day: "06"),
-      //   Day(day: "07")
-      // ]),
-      // TableRow(children: [
-      //   Day(day: "S", heading: true),
-      //   Day(day: "M", heading: true),
-      //   Day(day: "T", columnSelected: true, heading: true),
-      //   Day(day: "W", heading: true),
-      //   Day(day: "T", heading: true),
-      //   Day(day: "F", heading: true),
-      //   Day(day: "S", heading: true)
-      // ]),
-      //],
+      children: List.generate(listOfDays.length,
+          (index) => buildRows(listOfDays[index], dark, index)),
     );
   }
 }

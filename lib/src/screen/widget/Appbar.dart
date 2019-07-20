@@ -20,6 +20,14 @@ class CustomAppBar extends StatelessWidget {
   final month;
   final darkMode;
   CustomAppBar({this.year, this.month, this.darkMode});
+  darkmode() {
+    if (darkMode) {
+      return [Colors.white, "resources/dark_add.png"];
+    } else {
+      return [Colors.black87, "resources/Add.png"];
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -36,12 +44,13 @@ class CustomAppBar extends StatelessWidget {
                     child: Image.asset(
                       "resources/hamburger.png",
                       scale: 0.7,
-                      color: Colors.black87,
+                      color: darkmode()[0],
                     ),
                   ),
                   Text(
                     " ${this.monthList[this.month - 1]}",
                     style: TextStyle(
+                        color: darkmode()[0],
                         fontFamily: "Roboto",
                         fontSize: 20,
                         fontStyle: FontStyle.normal,
@@ -50,6 +59,7 @@ class CustomAppBar extends StatelessWidget {
                   Text(
                     " ${this.year}",
                     style: TextStyle(
+                        color: darkmode()[0],
                         fontFamily: "Roboto",
                         fontSize: 20,
                         fontStyle: FontStyle.normal,
@@ -69,13 +79,13 @@ class CustomAppBar extends StatelessWidget {
                     child: Image.asset(
                       "resources/search.png",
                       scale: 1,
-                      color: Colors.black87,
+                      color: darkmode()[0],
                     ),
                   ),
                   Container(
                     margin: EdgeInsets.only(right: 20.0),
                     child: Image.asset(
-                      "resources/Add.png",
+                      darkmode()[1],
                       scale: 1,
                     ),
                   ),

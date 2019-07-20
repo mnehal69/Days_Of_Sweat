@@ -17,45 +17,75 @@ class TitleBar extends StatefulWidget {
 
 class TitleBarState extends State<TitleBar> {
   final code = ResusableCode();
-  final battery = Battery();
+  final _battery = Battery();
   var _batteryState;
   var _batteryLevel;
 
-  Widget batteryPercentFinder(int percentage) {
-    final batteryBoxWidth = 30.0;
-    final batteryBoxHeight = 15.0;
+  initState() {
+    super.initState();
+    _battery.batteryLevel.then((level) {
+      this.setState(() {
+        _batteryLevel = level;
+      });
+    });
+
+    _battery.onBatteryStateChanged.listen((BatteryState state) {
+      _battery.batteryLevel.then((level) {
+        this.setState(() {
+          _batteryLevel = level;
+          _batteryState = state;
+        });
+      });
+    });
+  }
+
+  Widget batteryPercentFinder(context) {
+    //print("battery state:$_batteryLevel");
+    var state = this._batteryState != null;
+    final batteryBoxWidth = 20.0;
+    final batteryBoxHeight = 10.0;
+    final fontsize = 10.0;
     final borderWidth = 2.0;
-    final borderColor = HexColor("#707070");
-    var percentageNumber = (percentage / 100) * batteryBoxWidth;
+    final borderColor = Color.fromRGBO(112, 112, 112, 0.2);
+    var batteryColor;
+    var percentageNumber;
     var batteryHeight = batteryBoxHeight - (borderWidth + borderWidth);
-    var batteryColor = percentage < 20
-        ? Colors.red
-        : percentage > 20 && percentage < 70
-            ? HexColor("#E2E900")
-            : Colors.green;
+    if (state) {
+      percentageNumber =
+          (this._batteryLevel / 100) * (batteryBoxWidth - borderWidth);
+      batteryColor = this._batteryLevel <= 20 ? Colors.red : Colors.black;
+    } else {
+      percentageNumber = (0 / 100) * (batteryBoxWidth - borderWidth);
+      batteryColor = 0 <= 20 ? Colors.red : Colors.black;
+    }
 
     return Container(
-      margin: EdgeInsets.only(right: 5.0),
+      padding: EdgeInsets.only(right: 5.0),
+      width: code.percentageToNumber(context, "15%", false),
+      height: code.percentageToNumber(context, "5%", true),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Stack(
             alignment: Alignment.centerLeft,
             children: <Widget>[
               Container(
-                  width: batteryBoxWidth,
-                  height: batteryBoxHeight,
-                  decoration: new BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.rectangle,
-                    borderRadius: new BorderRadius.all(
-                      const Radius.circular(2.0),
-                    ),
-                    border: Border.all(
-                      width: borderWidth,
-                      color: borderColor,
-                      style: BorderStyle.solid,
-                    ),
-                  )),
+                width: batteryBoxWidth,
+                height: batteryBoxHeight,
+                decoration: new BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.rectangle,
+                  borderRadius: new BorderRadius.all(
+                    const Radius.circular(2.0),
+                  ),
+                  border: Border.all(
+                    width: borderWidth,
+                    color: borderColor,
+                    style: BorderStyle.solid,
+                  ),
+                ),
+              ),
               Container(
                 margin: EdgeInsets.only(left: borderWidth),
                 color: batteryColor,
@@ -64,28 +94,37 @@ class TitleBarState extends State<TitleBar> {
               ),
               Container(
                 width: batteryBoxWidth,
-                child: Icon(
-                  FontAwesomeIcons.bolt,
-                  size: batteryHeight,
-                ),
-              ),
+                height: batteryBoxHeight,
+                child: state
+                    ? _batteryState == BatteryState.charging
+                        ? Icon(
+                            FontAwesomeIcons.bolt,
+                            size: batteryBoxHeight - 5,
+                            color: Colors.white,
+                          )
+                        : Container()
+                    : Container(),
+              )
             ],
           ),
           Container(
+            alignment: Alignment.center,
+            height: batteryBoxHeight,
             margin: EdgeInsets.only(left: 5),
             child: Text(
-              percentage.toString() + "%",
+              state ? "${this._batteryLevel}%" : "0%",
               style: TextStyle(
-                color: batteryColor,
-                fontSize: batteryBoxHeight + 4,
+                color: widget.darkMode ? Colors.white : Colors.black,
+                fontSize: fontsize,
                 fontWeight: FontWeight.bold,
-                shadows: <Shadow>[
-                  Shadow(
-                    offset: Offset(1.0, 1.0),
-                    blurRadius: 3.0,
-                    color: Color.fromARGB(255, 0, 0, 0),
-                  ),
-                ],
+                fontFamily: "Lato",
+                // shadows: <Shadow>[
+                //   Shadow(
+                //     offset: Offset(1.0, 1.0),
+                //     blurRadius: 3.0,
+                //     color: Color.fromARGB(255, 0, 0, 0),
+                //   ),
+                // ],
               ),
             ),
           ),
@@ -128,6 +167,8 @@ class TitleBarState extends State<TitleBar> {
                             text: " Days of Sweat",
                             style: TextStyle(
                               fontFamily: "Plume",
+                              color:
+                                  widget.darkMode ? Colors.white : Colors.black,
                             ),
                           ),
                         ],
@@ -135,7 +176,7 @@ class TitleBarState extends State<TitleBar> {
                     ),
                   ),
                 ),
-                batteryPercentFinder(60),
+                batteryPercentFinder(context)
               ],
             ),
           ),

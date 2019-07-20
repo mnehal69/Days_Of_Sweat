@@ -4,7 +4,8 @@ import 'package:flutter/services.dart';
 import './widget/title.dart';
 import './widget/Appbar.dart';
 import './widget/Calender.dart';
-import 'package:intl/intl.dart';
+import './widget/Detail.dart';
+import './widget/music_player.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -41,7 +42,10 @@ class MainScreenState extends State<MainScreen> {
               selectedMonth: currentDate.month,
               selectedYear: currentDate.year,
               darkMode: darkMode,
+              show: false,
             ),
+            Detail(),
+            //MusicPlayer(),
           ],
         ),
       ),

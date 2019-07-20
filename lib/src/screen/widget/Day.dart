@@ -10,19 +10,29 @@ class Day extends StatelessWidget {
   final columnSelected;
   final heading;
   final code = ResusableCode();
+  final size = 14.0;
+  final unselectedColor = Colors.cyan;
+  final weekday;
+  final bool empty;
+  final bool darkmode;
+  final bool show;
 
   Day({
+    this.darkmode = false,
+    this.empty = false,
     this.day = "",
     this.finish = false,
     this.selected = false,
     this.rowSelected = false,
     this.columnSelected = false,
     this.heading = false,
+    this.weekday = "",
+    this.show = false,
   });
 
   Color taskDone() {
     if (finish) {
-      return Colors.grey[100];
+      return Colors.grey[200];
     } else {
       return Colors.transparent;
     }
@@ -32,9 +42,27 @@ class Day extends StatelessWidget {
     if (heading && columnSelected) {
       return HexColor("#827D7D");
     } else if (heading) {
-      return HexColor("BFBFBF");
+      return darkmode ? Colors.white : HexColor("BFBFBF");
     } else {
       return Colors.black;
+    }
+  }
+
+  Map darkMode() {
+    if (darkmode) {
+      return {
+        "background": Colors.transparent,
+        "FontColor": Colors.white,
+        "SelectedColorBackground": HexColor("#B100FF"),
+        "SelectedColorShadow": Color.fromRGBO(177, 0, 255, 1),
+      };
+    } else {
+      return {
+        "background": Colors.transparent,
+        "FontColor": Colors.black,
+        "SelectedColorBackground": HexColor("#FF0031"),
+        "SelectedColorShadow": Color.fromRGBO(255, 0, 49, 0.4),
+      };
     }
   }
 
@@ -48,24 +76,24 @@ class Day extends StatelessWidget {
               color: Colors.white,
               boxShadow: [
                 new BoxShadow(
-                    color: Colors.black26,
+                    color: Color.fromRGBO(0, 0, 0, 0.1),
                     //color: Colors.transparent,
                     blurRadius: 5.0,
                     spreadRadius: 2.0,
                     offset: new Offset(12, 5)),
               ],
             ),
-            alignment: Alignment.topCenter,
+            alignment: Alignment.center,
             padding: EdgeInsets.only(
-                bottom: code.percentageToNumber(context, "3.2%", true),
-                top: code.percentageToNumber(context, "0.8%", true)),
+                bottom: code.percentageToNumber(context, "1.7%", true),
+                top: code.percentageToNumber(context, "1.7%", true)),
             margin: EdgeInsets.only(
-                top: code.percentageToNumber(context, "2.5%", true)),
+                top: code.percentageToNumber(context, "1%", true)),
             child: Text(
               day.toString(),
               style: TextStyle(
                 fontFamily: "Roboto-Regular",
-                fontSize: 15,
+                fontSize: size,
                 fontWeight: FontWeight.w500,
                 fontStyle: FontStyle.normal,
               ),
@@ -79,14 +107,16 @@ class Day extends StatelessWidget {
           color: Colors.white,
           boxShadow: [
             new BoxShadow(
-              color: Colors.black26,
+              color: heading || empty
+                  ? Color.fromRGBO(0, 0, 0, 0.1)
+                  : Colors.black26,
               //color: Colors.transparent,
               blurRadius: 3.0,
               spreadRadius: 1.0,
             ),
           ],
         ),
-        height: code.percentageToNumber(context, "10%", true),
+        height: code.percentageToNumber(context, "8%", true),
         alignment: Alignment.center,
         margin: EdgeInsets.only(
             left: code.percentageToNumber(context, "2%", false),
@@ -95,7 +125,7 @@ class Day extends StatelessWidget {
           day.toString(),
           style: TextStyle(
             fontFamily: "Roboto-Regular",
-            fontSize: 15,
+            fontSize: size,
             fontWeight: FontWeight.w500,
             fontStyle: FontStyle.normal,
             color: header(),
@@ -107,37 +137,86 @@ class Day extends StatelessWidget {
     }
   }
 
+  Widget cell() {
+    if (this.show) {
+      return Stack(
+        children: <Widget>[
+          Container(
+            decoration: new BoxDecoration(
+                image: new DecorationImage(
+              image: new AssetImage('resources/delete.png'),
+              fit: BoxFit.cover,
+            )),
+          ),
+          Container(
+            alignment: Alignment.center,
+            child: Text(
+              day.toString(),
+              style: TextStyle(
+                // color: darkMode()["FontColor"],
+                color: Colors.white,
+                shadows: <Shadow>[
+                  Shadow(
+                    offset: Offset(1.0, 1.0),
+                    blurRadius: 3.0,
+                    color: Color.fromARGB(255, 0, 0, 0),
+                  ),
+                ],
+                fontFamily: "Roboto-Regular",
+                fontSize: size,
+                fontWeight: FontWeight.w500,
+                fontStyle: FontStyle.normal,
+              ),
+            ),
+          ),
+        ],
+      );
+    } else {
+      return Text(
+        day.toString(),
+        style: TextStyle(
+          color: darkMode()["FontColor"],
+          fontFamily: "Roboto-Regular",
+          fontSize: size,
+          fontWeight: FontWeight.w500,
+          fontStyle: FontStyle.normal,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    //print("Day:$day + show:$show");
     if (selected) {
       return Container(
         // color: Colors.teal,
-        color: Colors.transparent,
+        color: darkMode()["background"],
         child: Stack(
           fit: StackFit.passthrough,
           children: <Widget>[
             Container(
-              color: Colors.white,
+              color: darkMode()["background"],
               margin: EdgeInsets.only(
-                left: code.percentageToNumber(context, "2%", false),
-                right: code.percentageToNumber(context, "2%", false),
+                left: code.percentageToNumber(context, "1%", false),
+                right: code.percentageToNumber(context, "1%", false),
               ),
-              height: code.percentageToNumber(context, "10%", true),
+              height: code.percentageToNumber(context, "7%", true),
             ),
             Container(
-              padding: EdgeInsets.only(top: 12, bottom: 10),
+              padding: EdgeInsets.only(top: 8, bottom: 8),
               margin: EdgeInsets.only(
-                  top: code.percentageToNumber(context, "1%", true)),
+                  top: code.percentageToNumber(context, "0%", true)),
               decoration: BoxDecoration(
                 boxShadow: [
                   new BoxShadow(
-                    color: Color.fromRGBO(255, 0, 49, 0.4),
-                    //color: Colors.transparent,
-                    blurRadius: 5.0,
-                    spreadRadius: 2.0,
-                  ),
+                      color: darkMode()["SelectedColorShadow"],
+                      //color: Colors.transparent,
+                      blurRadius: 10.0,
+                      spreadRadius: 10.0,
+                      offset: new Offset(0, 0)),
                 ],
-                color: HexColor("#FF0031"),
+                color: darkMode()["SelectedColorBackground"],
                 //color: Colors.transparent,
                 borderRadius: new BorderRadius.all(
                   const Radius.circular(5.0),
@@ -158,11 +237,11 @@ class Day extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    "TUE",
+                    this.weekday,
                     style: TextStyle(
                       color: Colors.white,
                       fontFamily: "Roboto-Light",
-                      fontSize: 15,
+                      fontSize: size,
                       fontStyle: FontStyle.normal,
                     ),
                   ),
@@ -174,28 +253,30 @@ class Day extends StatelessWidget {
       );
     } else {
       return Container(
-        height: code.percentageToNumber(context, "10%", true),
-        // color: Colors.teal,
-        color: Colors.transparent,
+        height: code.percentageToNumber(context, "8%", true),
+        //color: Colors.teal,
+        color: darkMode()["background"],
         padding: EdgeInsets.fromLTRB(0, 2, 0, 2),
         child: Stack(
           children: [
             Container(
-              color: taskDone(),
+              color: this.show ? Colors.transparent : taskDone(),
               // padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
-              margin: EdgeInsets.all(
-                  code.percentageToNumber(context, "1.2%", false)),
+              margin:
+                  EdgeInsets.all(code.percentageToNumber(context, "1%", false)),
               child: Center(
-                child: Text(
-                  day.toString(),
-                  style: TextStyle(
-                    color: header(),
-                    fontFamily: "Roboto-Regular",
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                    fontStyle: FontStyle.normal,
-                  ),
-                ),
+                child:
+                    // child: Text(
+                    //   day.toString(),
+                    //   style: TextStyle(
+                    //     color: darkMode()["FontColor"],
+                    //     fontFamily: "Roboto-Regular",
+                    //     fontSize: size,
+                    //     fontWeight: FontWeight.w500,
+                    //     fontStyle: FontStyle.normal,
+                    //   ),
+                    // ),
+                    this.cell(),
               ),
             ),
             tape(context),
