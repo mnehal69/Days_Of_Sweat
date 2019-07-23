@@ -45,7 +45,7 @@ class MainScreenState extends State<MainScreen> {
               show: false,
             ),
             Detail(),
-            //MusicPlayer(),
+            MusicPlayer(),
           ],
         ),
       ),

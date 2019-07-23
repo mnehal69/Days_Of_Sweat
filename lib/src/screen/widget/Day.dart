@@ -1,6 +1,7 @@
 import 'package:days_of_sweat/src/screen/widget/hex_color.dart';
 import 'package:days_of_sweat/src/screen/widget/reuseable.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class Day extends StatelessWidget {
   final day;
@@ -53,14 +54,16 @@ class Day extends StatelessWidget {
       return {
         "background": Colors.transparent,
         "FontColor": Colors.white,
-        "SelectedColorBackground": HexColor("#B100FF"),
+        "SelectedColorBackgroundEnd": HexColor("#B100FF"),
+        "SelectedColorBackgroundBegin": HexColor("#10DEFF"),
         "SelectedColorShadow": Color.fromRGBO(177, 0, 255, 1),
       };
     } else {
       return {
         "background": Colors.transparent,
         "FontColor": Colors.black,
-        "SelectedColorBackground": HexColor("#FF0031"),
+        "SelectedColorBackgroundBegin": HexColor("#FF0031"),
+        "SelectedColorBackgroundEnd": HexColor("##FF4F8C"),
         "SelectedColorShadow": Color.fromRGBO(255, 0, 49, 0.4),
       };
     }
@@ -213,10 +216,18 @@ class Day extends StatelessWidget {
                       color: darkMode()["SelectedColorShadow"],
                       //color: Colors.transparent,
                       blurRadius: 10.0,
-                      spreadRadius: 10.0,
+                      spreadRadius: 5.0,
                       offset: new Offset(0, 0)),
                 ],
-                color: darkMode()["SelectedColorBackground"],
+                // color: darkMode()["SelectedColorBackground"],
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    darkMode()["SelectedColorBackgroundBegin"],
+                    darkMode()["SelectedColorBackgroundEnd"],
+                  ],
+                ),
                 //color: Colors.transparent,
                 borderRadius: new BorderRadius.all(
                   const Radius.circular(5.0),

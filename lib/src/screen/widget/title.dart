@@ -46,13 +46,14 @@ class TitleBarState extends State<TitleBar> {
     final batteryBoxHeight = 10.0;
     final fontsize = 10.0;
     final borderWidth = 2.0;
-    final borderColor = Color.fromRGBO(112, 112, 112, 0.2);
+    final borderColor = Color.fromRGBO(112, 112, 112, 0.6);
     var batteryColor;
     var percentageNumber;
     var batteryHeight = batteryBoxHeight - (borderWidth + borderWidth);
     if (state) {
       percentageNumber =
-          (this._batteryLevel / 100) * (batteryBoxWidth - borderWidth);
+          (this._batteryLevel / 100) * (batteryBoxWidth - borderWidth) -
+              (borderWidth / 2);
       batteryColor = this._batteryLevel <= 20 ? Colors.red : Colors.black;
     } else {
       percentageNumber = (0 / 100) * (batteryBoxWidth - borderWidth);
@@ -87,10 +88,15 @@ class TitleBarState extends State<TitleBar> {
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(left: borderWidth),
-                color: batteryColor,
+                margin: EdgeInsets.only(left: borderWidth - 0.5),
                 width: percentageNumber,
                 height: batteryHeight,
+                decoration: new BoxDecoration(
+                  color: batteryColor,
+                  borderRadius: new BorderRadius.all(
+                    const Radius.circular(1.2),
+                  ),
+                ),
               ),
               Container(
                 width: batteryBoxWidth,
@@ -104,9 +110,16 @@ class TitleBarState extends State<TitleBar> {
                           )
                         : Container()
                     : Container(),
-              )
+              ),
             ],
           ),
+          Container(
+              margin: EdgeInsets.only(
+                top: code.percentageToNumber(context, "0.5%", true),
+              ),
+              width: code.percentageToNumber(context, "0.5%", false),
+              height: code.percentageToNumber(context, "0.5%", true),
+              color: borderColor),
           Container(
             alignment: Alignment.center,
             height: batteryBoxHeight,
