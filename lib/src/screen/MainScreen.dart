@@ -18,35 +18,47 @@ class MainScreenState extends State<MainScreen> {
   final size = 30.0;
 
   var currentDate = new DateTime.now();
-  var darkMode = false;
+  var darkMode = true;
   @override
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
     return Material(
       child: Container(
         color: darkMode ? Colors.black : Colors.white,
-        margin: EdgeInsets.only(bottom: 5.0, top: 5.0),
-        child: Column(
-          children: <Widget>[
-            TitleBar(
-              days: 0,
-              darkMode: darkMode,
-            ),
-            CustomAppBar(
-              year: currentDate.year,
-              month: currentDate.month,
-              darkMode: darkMode,
-            ),
-            Calender(
-              selectedDay: currentDate.day,
-              selectedMonth: currentDate.month,
-              selectedYear: currentDate.year,
-              darkMode: darkMode,
-              show: false,
-            ),
-            Detail(),
-            MusicPlayer(),
-          ],
+        child: Container(
+          margin: EdgeInsets.only(top: 5.0),
+          child: Stack(
+            children: [
+              Container(
+                alignment: Alignment.topCenter,
+                child: Column(
+                  children: <Widget>[
+                    TitleBar(
+                      days: 0,
+                      darkMode: darkMode,
+                    ),
+                    CustomAppBar(
+                      year: currentDate.year,
+                      month: currentDate.month,
+                      darkMode: darkMode,
+                    ),
+                    Calender(
+                      selectedDay: currentDate.day,
+                      selectedMonth: currentDate.month,
+                      selectedYear: currentDate.year,
+                      darkMode: darkMode,
+                      show: false,
+                    ),
+                    Detail(),
+                  ],
+                ),
+              ),
+              Container(
+                alignment: Alignment.bottomRight,
+                child: MusicPlayer(),
+              ),
+            ],
+          ),
         ),
       ),
     );
