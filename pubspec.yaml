@@ -31,7 +31,8 @@ dependencies:
   intl: ^0.15.8
   fluttery_audio: ^0.0.4
   percent_indicator: "^2.1.1"
-  appspector: "^0.0.6"
+  flutter_redux: ^0.5.3 
+  redux: ^3.0.0
 
 
 

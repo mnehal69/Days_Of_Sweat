@@ -18,7 +18,7 @@ class MainScreenState extends State<MainScreen> {
   final size = 30.0;
 
   var currentDate = new DateTime.now();
-  var darkMode = true;
+  var darkMode = false;
   @override
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
