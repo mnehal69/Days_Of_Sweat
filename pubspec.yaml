@@ -33,6 +33,14 @@ dependencies:
   percent_indicator: "^2.1.1"
   flutter_redux: ^0.5.3 
   redux: ^3.0.0
+  flutter_redux_dev_tools: ^0.3.0
+  youtube_extractor: ^1.0.3
+  volume: ^0.1.0
+  flare_flutter: ^1.5.5
+  audioplayers: ^0.13.1
+  
+
+
 
 
 
@@ -76,6 +84,7 @@ flutter:
     #  - resources/Add.png
     #  - resources/search.png
      - resources/
+     - assets/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

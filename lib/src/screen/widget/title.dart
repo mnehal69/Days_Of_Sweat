@@ -61,6 +61,9 @@ class TitleBarState extends State<TitleBar> {
     }
 
     return Container(
+      margin: EdgeInsets.only(
+        top: 5.0,
+      ),
       padding: EdgeInsets.only(right: 5.0),
       width: code.percentageToNumber(context, "15%", false),
       height: code.percentageToNumber(context, "5%", true),

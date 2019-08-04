@@ -39,7 +39,8 @@ class CalenderState extends State<Calender> {
     var date = new DateTime(widget.selectedYear, widget.selectedMonth, 1);
     var firstDayStart = DateFormat("E").format(date);
     int firstDayIndex = dayList.indexOf(firstDayStart);
-    int lastday = 30;
+    int lastday =
+        new DateTime(widget.selectedYear, widget.selectedMonth + 1, 0).day;
     int daycounter = 1;
     for (int i = 0; i < 6; i++) {
       var columnList = [];

@@ -192,7 +192,8 @@ class Day extends StatelessWidget {
   Widget build(BuildContext context) {
     //print("Day:$day + show:$show");
     if (selected) {
-      return Container(
+      return AnimatedContainer(
+        duration: new Duration(milliseconds: 500),
         // color: Colors.teal,
         color: darkMode()["background"],
         child: Stack(
