@@ -21,12 +21,12 @@ class SMusicMain extends StatelessWidget {
     int minutes = total.minute;
     int second = total.second;
     //print("Minutes:$minutes.$second");
-    if (minutes == 0) {
-      return "0:00";
+    if (second < 10) {
+      return "0:0$second";
     }
     return "$minutes:$second";
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return new StoreConnector<PlayerState, PlayerState>(

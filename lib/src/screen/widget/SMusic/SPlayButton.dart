@@ -9,6 +9,8 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import './../../../../redux/actions/main_actions.dart';
 import 'package:youtube_extractor/youtube_extractor.dart';
 import 'package:volume/volume.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'package:audioplayers/audio_cache.dart';
 
 class SPlayButton extends StatefulWidget {
   // var play;
@@ -32,18 +34,11 @@ class SPlayButtonState extends State<SPlayButton> {
   var dragging = false;
   // PlayerButtonState({this.play});
   Timer timer;
-  AudioManager audioManager;
   int maxVol, currentVol;
 
   void initState() {
     super.initState();
-    audioManager = AudioManager.STREAM_MUSIC;
-    initPlatformState();
     updateVolumes();
-  }
-
-  Future<void> initPlatformState() async {
-    await Volume.controlVolume(AudioManager.STREAM_MUSIC);
   }
 
   updateVolumes() async {
@@ -69,11 +64,21 @@ class SPlayButtonState extends State<SPlayButton> {
     print("playbutton calling: ${!state.playing}");
     StoreProvider.of<PlayerState>(context).dispatch(Player(!state.playing));
     if (state.playing) {
-      // timer =
-      //  Timer.periodic(Duration(seconds: 1), (Timer t) => loopRun(isplaying));
+      timer = Timer.periodic(Duration(seconds: 1), (Timer t) => loopRun(state));
+    } else {
+      timer?.cancel();
     }
+    AudioPlayer.logEnabled = false;
     if (state.playing) {
-      state.audioCache.play("kygo.mp3");
+      state.audioCache.play("kygo.mp3").then((onValue) {
+        // state.advancedPlayer.getDuration().then((onValue) {
+        //   print("DURATION:$onValue");
+        // });
+        state.advancedPlayer.onDurationChanged.listen((Duration d) {
+          StoreProvider.of<PlayerState>(context)
+              .dispatch(Audioplayer(state.local, 0, d.inMilliseconds));
+        });
+      });
     } else {
       state.advancedPlayer.stop().catchError((onError) {
         print("ERROR:$onError");
@@ -82,18 +87,13 @@ class SPlayButtonState extends State<SPlayButton> {
     }
   }
 
-  // loopRun(bool isplaying) {
-  //   if (isplaying) {
-  //     if (percent > 1) {
-  //       percent = 0.0;
-  //     } else {
-  //       print("percent:$percent");
-  //       setState(() {
-  //         percent = percent + 0.01;
-  //       });
-  //     }
-  //   }
-  // }
+  loopRun(PlayerState state) {
+    state.advancedPlayer.onAudioPositionChanged.listen((Duration d) {
+      StoreProvider.of<PlayerState>(context).dispatch(
+          Audioplayer(state.local, d.inMilliseconds, state.totalDuration));
+    });
+    print("DURATION:${state.currentDuration}");
+  }
 
   Map darkMode(bool darkmode) {
     if (darkmode) {

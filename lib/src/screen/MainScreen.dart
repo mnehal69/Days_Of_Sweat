@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:days_of_sweat/redux/store/main_store.dart';
 import 'package:days_of_sweat/src/screen/widget/reuseable.dart';
 import 'package:flutter/cupertino.dart';
@@ -41,6 +42,7 @@ class MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
+    AudioPlayer.logEnabled = false;
     return Scaffold(
 //      key: _scaffoldKey,
       // bottomSheet: Container(),

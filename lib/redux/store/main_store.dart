@@ -1,5 +1,5 @@
- import 'package:audioplayers/audioplayers.dart';
- import 'package:audioplayers/audio_cache.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'package:audioplayers/audio_cache.dart';
 
 class PlayerState {
   bool playing = false;
@@ -9,8 +9,9 @@ class PlayerState {
   int volume = 0;
   bool expand = false;
   AudioPlayer advancedPlayer = new AudioPlayer();
-   AudioCache audioCache = new AudioCache();
+  AudioCache audioCache = new AudioCache();
   int currentDuration = 0;
   int totalDuration = 0;
-  bool local = true;
+  bool local = false;
+  bool same = false;
 }
