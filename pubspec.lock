@@ -172,6 +172,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.12.5"
+  media_metadata_plugin:
+    dependency: "direct main"
+    description:
+      name: media_metadata_plugin
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.5"
+  media_notification:
+    dependency: "direct main"
+    description:
+      name: media_notification
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.5"
   meta:
     dependency: transitive
     description:
@@ -187,7 +201,7 @@ packages:
     source: hosted
     version: "1.6.2"
   path_provider:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: path_provider
       url: "https://pub.dartlang.org"
@@ -207,6 +221,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.1"
+  permission_handler:
+    dependency: "direct main"
+    description:
+      name: permission_handler
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.2.1+1"
   petitparser:
     dependency: transitive
     description:

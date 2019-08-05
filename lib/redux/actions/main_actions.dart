@@ -1,13 +1,34 @@
 import './../store/main_store.dart';
+import './../../src/screen/widget/Song/song.dart';
 // import 'package:audioplayers/audioplayers.dart';
 // import 'package:audioplayers/audio_cache.dart';
 
 class Player {
   final bool play;
-
   Player(this.play);
   PlayerState isPlaying(PlayerState prevState, bool play) {
     prevState.playing = play;
+    return prevState;
+  }
+}
+
+class Music {
+  final List<Song> songlist;
+  final int index;
+  final bool playing;
+  Music(this.songlist, this.index, this.playing);
+  PlayerState list(
+      PlayerState prevState, List<Song> songlis, int index, bool playing) {
+    prevState.songlist = songlis;
+    if (index < 0 || index > prevState.songlist.length - 1) {
+      prevState.index = 0;
+      prevState.playing = !playing;
+    } else {
+      prevState.index = index;
+      prevState.playing = playing;
+    }
+    prevState.currentDuration = 0;
+    prevState.totalDuration = prevState.songlist[index].duration;
     return prevState;
   }
 }
@@ -16,11 +37,21 @@ class Audioplayer {
   int duration;
   int current;
   bool isLocal;
-  Audioplayer(this.isLocal,this.current, this.duration);
-  PlayerState durationInPlay(PlayerState prevState,bool local, int current, int duration) {
+  Audioplayer(this.isLocal, this.current, this.duration);
+  PlayerState durationInPlay(
+      PlayerState prevState, bool local, int current, int duration) {
     prevState.currentDuration = current;
     prevState.totalDuration = duration;
-    prevState.local=isLocal;
+    prevState.local = isLocal;
+    return prevState;
+  }
+}
+
+class Permission {
+  bool storage;
+  Permission(this.storage);
+  PlayerState isaccesed(PlayerState prevState, bool storage) {
+    prevState.storageAccess = storage;
     return prevState;
   }
 }
@@ -41,6 +72,19 @@ class SongChooser {
   PlayerState songNextPrev(PlayerState prevState, bool next, bool prev) {
     prevState.nextbuttonPress = next;
     prevState.prevbuttonPress = prev;
+    if (next) {
+      prevState.index = prevState.index + 1;
+      if (prevState.index > prevState.songlist.length - 1) {
+        prevState.index = 0;
+      }
+    } else {
+      prevState.index = prevState.index - 1;
+      if (prevState.index < 0) {
+        prevState.index = 0;
+      }
+    }
+    prevState.currentDuration = 0;
+    prevState.totalDuration = prevState.songlist[prevState.index].duration;
     // print("sadder:${prevState.prevbuttonPress}");
     return prevState;
   }

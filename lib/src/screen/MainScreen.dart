@@ -1,11 +1,13 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:days_of_sweat/redux/store/main_store.dart';
+import 'package:days_of_sweat/src/screen/widget/Song/song.dart';
 import 'package:days_of_sweat/src/screen/widget/reuseable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:media_notification/media_notification.dart';
 import './widget/title.dart';
 import './widget/Appbar.dart';
 import './widget/Calender.dart';
@@ -20,12 +22,13 @@ class MainScreen extends StatefulWidget {
   }
 }
 
-class MainScreenState extends State<MainScreen> {
+class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   final size = 30.0;
   var currentDate = new DateTime.now();
   var darkMode = false;
   var code = ResusableCode();
-
+  AppLifecycleState _lastLifecycleState;
+  @override
   String volumeText(int volume) {
     if (volume >= 0 && volume <= 100) {
       return "${volume.toString()}%";
@@ -38,10 +41,30 @@ class MainScreenState extends State<MainScreen> {
     }
   }
 
-  // final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    setState(() {
+      _lastLifecycleState = state;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
+    //print("LAST LIFE CYCLE:$_lastLifecycleState");
+    //MediaNotification.hide();
     AudioPlayer.logEnabled = false;
     return Scaffold(
 //      key: _scaffoldKey,

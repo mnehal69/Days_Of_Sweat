@@ -1,5 +1,6 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:audioplayers/audio_cache.dart';
+import 'package:days_of_sweat/src/screen/widget/Song/song.dart';
 
 class PlayerState {
   bool playing = false;
@@ -14,4 +15,8 @@ class PlayerState {
   int totalDuration = 0;
   bool local = false;
   bool same = false;
+  bool storageAccess = false;
+  List<Song> songlist = [];
+  int index = -1;
+  String status = 'hidden';
 }

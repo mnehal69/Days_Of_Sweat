@@ -7,10 +7,11 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import './../../../../redux/actions/main_actions.dart';
-import 'package:youtube_extractor/youtube_extractor.dart';
+// import 'package:youtube_extractor/youtube_extractor.dart';
 import 'package:volume/volume.dart';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:audioplayers/audio_cache.dart';
+import 'package:flutter/services.dart';
+import 'package:media_notification/media_notification.dart';
 
 class SPlayButton extends StatefulWidget {
   // var play;
@@ -59,32 +60,61 @@ class SPlayButtonState extends State<SPlayButton> {
     super.dispose();
   }
 
-  playbutton(PlayerState state) {
+  playbutton(PlayerState state) async {
     //print("object CALLED");
-    print("playbutton calling: ${!state.playing}");
+    //print("playbutton calling: ${!state.playing}");
     StoreProvider.of<PlayerState>(context).dispatch(Player(!state.playing));
     if (state.playing) {
       timer = Timer.periodic(Duration(seconds: 1), (Timer t) => loopRun(state));
     } else {
       timer?.cancel();
     }
+
     AudioPlayer.logEnabled = false;
     if (state.playing) {
-      state.audioCache.play("kygo.mp3").then((onValue) {
-        // state.advancedPlayer.getDuration().then((onValue) {
-        //   print("DURATION:$onValue");
-        // });
-        state.advancedPlayer.onDurationChanged.listen((Duration d) {
-          StoreProvider.of<PlayerState>(context)
-              .dispatch(Audioplayer(state.local, 0, d.inMilliseconds));
-        });
-      });
+      state.advancedPlayer.play(state.songlist[state.index].uri, isLocal: true);
+      try {
+        await MediaNotification.show(
+            title: state.songlist[state.index].title,
+            author: state.songlist[state.index].artist,
+            play: true);
+      } on PlatformException {}
     } else {
-      state.advancedPlayer.stop().catchError((onError) {
+      state.advancedPlayer.pause().catchError((onError) {
         print("ERROR:$onError");
         state.advancedPlayer.release();
       });
+      try {
+        await MediaNotification.hide();
+      } on PlatformException {}
     }
+    MediaNotification.setListener('play', () {
+      state.advancedPlayer.resume();
+    });
+    MediaNotification.setListener('pause', () {
+      state.advancedPlayer.pause();
+    });
+    MediaNotification.setListener('prev', () {
+      StoreProvider.of<PlayerState>(context)
+          .dispatch(Music(state.songlist, state.index - 1, !state.playing));
+      playbutton(state);
+    });
+    MediaNotification.setListener('next', () {
+      StoreProvider.of<PlayerState>(context)
+          .dispatch(Music(state.songlist, state.index + 1, !state.playing));
+      playbutton(state);
+    });
+
+    state.advancedPlayer.onPlayerCompletion.listen((event) {
+      //print("Play:${state.playing}+Index:${state.index + 1}");
+
+      StoreProvider.of<PlayerState>(context)
+          .dispatch(Music(state.songlist, state.index + 1, !state.playing));
+      //StoreProvider.of<PlayerState>(context)
+      // .dispatch(Audioplayer(state.local, 0, 0));
+      timer?.cancel();
+      playbutton(state);
+    });
   }
 
   loopRun(PlayerState state) {
@@ -92,7 +122,6 @@ class SPlayButtonState extends State<SPlayButton> {
       StoreProvider.of<PlayerState>(context).dispatch(
           Audioplayer(state.local, d.inMilliseconds, state.totalDuration));
     });
-    print("DURATION:${state.currentDuration}");
   }
 
   Map darkMode(bool darkmode) {
@@ -119,11 +148,11 @@ class SPlayButtonState extends State<SPlayButton> {
     print("Volume Up Calling");
   }
 
-  Widget playing() {
+  Widget playing(PlayerState state) {
     return CircularPercentIndicator(
       radius: 60,
       lineWidth: 2.0,
-      percent: percent,
+      percent: state.currentDuration / state.totalDuration,
       backgroundColor: Colors.white,
       progressColor: HexColor("#FF0031"),
       center: AnimatedContainer(
@@ -154,7 +183,7 @@ class SPlayButtonState extends State<SPlayButton> {
     );
   }
 
-  Widget pause() {
+  Widget pause(PlayerState state) {
     percent = 0.0;
     return AnimatedContainer(
       duration: Duration(milliseconds: 50),
@@ -211,6 +240,7 @@ class SPlayButtonState extends State<SPlayButton> {
                   },
                   onHorizontalDragUpdate: (details) {
                     if (!dragging) {
+                      state.advancedPlayer.release();
                       if (details.delta.dx > 0) {
                         print("Dragging in +X direction");
                         setState(() {
@@ -220,6 +250,9 @@ class SPlayButtonState extends State<SPlayButton> {
                         });
                         StoreProvider.of<PlayerState>(context)
                             .dispatch(SongChooser(true, false));
+                        StoreProvider.of<PlayerState>(context).dispatch(Music(
+                            state.songlist, state.index + 1, state.playing));
+                        // playbutton(state);
                       } else {
                         print("Dragging in -X direction");
                         setState(() {
@@ -229,6 +262,9 @@ class SPlayButtonState extends State<SPlayButton> {
                         });
                         StoreProvider.of<PlayerState>(context)
                             .dispatch(SongChooser(false, true));
+                        StoreProvider.of<PlayerState>(context).dispatch(Music(
+                            state.songlist, state.index - 1, state.playing));
+                        // playbutton(state);
                       }
                     }
                   },
@@ -277,12 +313,12 @@ class SPlayButtonState extends State<SPlayButton> {
                     }
                   },
 
-                  child: pause(),
+                  child: pause(state),
                 ),
               )
             : GestureDetector(
                 onTap: () => this.playbutton(state),
-                child: playing(),
+                child: playing(state),
               );
       },
     );

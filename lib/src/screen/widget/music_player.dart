@@ -1,11 +1,19 @@
+import 'dart:async';
+
 import 'package:days_of_sweat/redux/store/main_store.dart';
 import 'package:days_of_sweat/src/screen/widget/FullScreenMusicPlayer/FullMusicMain.dart';
 import 'package:days_of_sweat/src/screen/widget/SMusic/SMusicMain.dart';
+import 'package:days_of_sweat/src/screen/widget/Song/song.dart';
 import 'package:days_of_sweat/src/screen/widget/hex_color.dart';
 import 'package:days_of_sweat/src/screen/widget/reuseable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:fluttery_audio/fluttery_audio.dart';
+import 'package:permission_handler/permission_handler.dart';
 import './../../../redux/actions/main_actions.dart';
 
 class MusicPlayer extends StatefulWidget {
@@ -18,13 +26,77 @@ class MusicPlayer extends StatefulWidget {
 class MusicPlayerState extends State<MusicPlayer> {
   String imageUrl, title, author;
   var code = ResusableCode();
-  String localFilePath;
-
+  List<Song> songs = [];
   var dragged = false;
-  var songs;
+  var storage_access = false;
 
   void initState() {
     super.initState();
+    // SchedulerBinding.instance
+    //     .addPostFrameCallback((_) => {_getMusicList(context).then((onValue) {
+    //           StoreProvider.of<PlayerState>(context)
+    //               .dispatch(Music(this._songs));
+    //           //print("SONGS:${state.songlist[0].toString()}");
+    //         })});
+    if (!storage_access) {
+      PermissionHandler()
+          .checkPermissionStatus(PermissionGroup.storage)
+          .then((onValue) {
+        //print(onValue);
+        if (onValue == PermissionStatus.unknown ||
+            onValue == PermissionStatus.denied) {
+          PermissionHandler()
+              .requestPermissions([PermissionGroup.storage]).then((p) {
+            //print(p.toString());
+          });
+        }
+        if (onValue == PermissionStatus.granted) {
+          setState(() {
+            storage_access = true;
+          });
+          _getMusicList(context);
+        }
+      });
+    } else {
+      _getMusicList(context);
+    }
+  }
+
+  static const MusicList = const MethodChannel('MusicList');
+  static Future<dynamic> allSongs(List<dynamic> songs) async {
+    var completer = new Completer();
+    //print(songs.runtimeType);
+    var mySongs = songs.map((m) => new Song.fromMap(m)).toList();
+    completer.complete(mySongs);
+    return completer.future;
+  }
+
+  Future<dynamic> _getMusicList(dynamic context) async {
+    List<Song> _songs;
+    if (storage_access) {
+      try {
+        try {
+          _songs = await allSongs(await MusicList.invokeMethod('getMusicList'));
+        } catch (e) {
+          print("Failed to get songs: '${e.message}'.");
+        }
+        //print("music Length: ${_songs.runtimeType}");
+      } on PlatformException catch (e) {
+        print("Failed to get music List ${e.message}");
+      }
+    } else {
+      Fluttertoast.showToast(
+          msg: "Storage Permission Not Accesible",
+          gravity: ToastGravity.BOTTOM,
+          toastLength: Toast.LENGTH_LONG,
+          timeInSecForIos: 3);
+
+      //_getMusicList(context);
+    }
+    setState(() {
+      songs = _songs;
+    });
+    StoreProvider.of<PlayerState>(context).dispatch(Music(_songs, 0, false));
   }
 
   //#FF0031
@@ -35,11 +107,14 @@ class MusicPlayerState extends State<MusicPlayer> {
       converter: (store) => store.state,
       builder: (context, state) {
         state.audioCache.fixedPlayer = state.advancedPlayer;
-
+        if (songs.length > 0) {
+          //print(songs.toString());
+        }
         return GestureDetector(
           onVerticalDragUpdate: (detail) {
             if (!dragged) {
               StoreProvider.of<PlayerState>(context).dispatch(Expanding(true));
+
               if (detail.delta.dy < 0) {
                 setState(() {
                   dragged = true;
@@ -57,6 +132,10 @@ class MusicPlayerState extends State<MusicPlayer> {
           onVerticalDragEnd: (detail) {
             setState(() {
               dragged = false;
+            });
+            state.advancedPlayer.onAudioPositionChanged.listen((d) {
+              StoreProvider.of<PlayerState>(context).dispatch(Audioplayer(
+                  state.local, d.inMilliseconds, state.totalDuration));
             });
           },
           child: AnimatedContainer(

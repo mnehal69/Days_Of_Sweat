@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:days_of_sweat/redux/store/main_store.dart';
 import 'package:days_of_sweat/src/screen/widget/reuseable.dart';
 import 'package:flutter/material.dart';
@@ -10,8 +12,7 @@ class SCover extends StatefulWidget {
   }
 }
 
-class SCoverState extends State<SCover>
-    with SingleTickerProviderStateMixin {
+class SCoverState extends State<SCover> with SingleTickerProviderStateMixin {
   final code = ResusableCode();
   AnimationController rotationController;
 
@@ -44,6 +45,10 @@ class SCoverState extends State<SCover>
       converter: (store) => store.state,
       builder: (context, state) {
         isplaying(state.playing);
+        // if (state.songlist.length > 0) {
+        //   print(state.songlist[0].albumArt);
+        // }
+        //print("CANCELLED:${state.songlist[0].album}");
         return AnimatedBuilder(
           animation: rotationController,
           builder: (context, child) {
@@ -67,8 +72,8 @@ class SCoverState extends State<SCover>
                       child: Image.asset("resources/vcd.png"),
                     ),
                   ),
-                  AnimatedContainer(
-                    duration: Duration(milliseconds: 200),
+                  Container(
+                    //duration: Duration(milliseconds: 200),
                     margin: EdgeInsets.only(
                         top: code.percentageToNumber(context, "1%", true),
                         left: code.percentageToNumber(context, "1%", false)),
@@ -78,15 +83,23 @@ class SCoverState extends State<SCover>
                     height: state.expand
                         ? code.percentageToNumber(context, "45%", true)
                         : code.percentageToNumber(context, "11%", true),
-                    decoration: BoxDecoration(
-                        color: Colors.red,
-                        shape: BoxShape.rectangle,
-                        image: new DecorationImage(
-                          image: new ExactAssetImage(
-                            "resources/no_coverM.png",
-                          ),
-                          fit: BoxFit.fitWidth,
-                        )),
+
+                    child: state.index > -1
+                        ? Image.file(
+                            new File.fromUri(Uri.parse(
+                                state.songlist[state.index].albumArt)),
+                          )
+                        : Image.asset("resources/no_coverM.png"),
+                    // decoration: BoxDecoration(
+                    //     color: Colors.red,
+                    //     shape: BoxShape.rectangle,
+                    //     image: new DecorationImage(
+                    //       image: new AssetImage(state.songlist.length <= 0
+                    //           ? "resources/no_coverM.png"
+                    //           : new File.fromUri(
+                    //               Uri.parse(state.songlist[0].albumArt))),
+                    //       fit: BoxFit.fitWidth,
+                    //     )),
                   ),
                 ],
               ),

@@ -22,7 +22,8 @@ class SMusicMain extends StatelessWidget {
     int second = total.second;
     //print("Minutes:$minutes.$second");
     if (second < 10) {
-      return "0:0$second";
+      //print("TOTAL:${second}");
+      return "$minutes:0$second";
     }
     return "$minutes:$second";
   }
@@ -61,7 +62,9 @@ class SMusicMain extends StatelessWidget {
                     padding: EdgeInsets.all(
                         code.percentageToNumber(context, "0.2%", true)),
                     child: Text(
-                      titleSlicer("Months"),
+                      state.index > -1
+                          ? titleSlicer(state.songlist[state.index].title)
+                          : "",
                       style: TextStyle(
                           fontFamily: "Roboto-Bold",
                           fontWeight: FontWeight.bold,
@@ -72,7 +75,7 @@ class SMusicMain extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    "Calvin Harris",
+                    state.index > -1 ? state.songlist[state.index].artist : "",
                     style: TextStyle(
                       fontFamily: "Roboto-Light",
                       color: Colors.white,
@@ -93,7 +96,7 @@ class SMusicMain extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        durationfromMilliSeconds(state.totalDuration),
+                        "  " + durationfromMilliSeconds(state.totalDuration),
                         style: TextStyle(
                           fontFamily: "Roboto-Light",
                           color: Colors.white54,

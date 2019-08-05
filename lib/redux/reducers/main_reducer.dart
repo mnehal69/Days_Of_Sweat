@@ -19,5 +19,12 @@ PlayerState playerStateReducer(PlayerState prevState, dynamic action) {
     return action.durationInPlay(
         prevState, action.isLocal, action.current, action.duration);
   }
+  if (action is Permission) {
+    return action.isaccesed(prevState, action.storage);
+  }
+  if (action is Music) {
+    return action.list(
+        prevState, action.songlist, action.index, action.playing);
+  }
   return prevState;
 }
