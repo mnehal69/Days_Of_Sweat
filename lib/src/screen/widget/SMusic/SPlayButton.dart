@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:days_of_sweat/redux/store/main_store.dart';
 import 'package:days_of_sweat/src/screen/widget/hex_color.dart';
 import 'package:days_of_sweat/src/screen/widget/reuseable.dart';
@@ -73,11 +74,13 @@ class SPlayButtonState extends State<SPlayButton> {
     AudioPlayer.logEnabled = false;
     if (state.playing) {
       state.advancedPlayer.play(state.songlist[state.index].uri, isLocal: true);
+      //print("Music:" + state.songlist[state.index].albumArt);
       try {
         await MediaNotification.show(
             title: state.songlist[state.index].title,
             author: state.songlist[state.index].artist,
-            play: true);
+            play: true,
+            albumArt: state.songlist[state.index].albumArt);
       } on PlatformException {}
     } else {
       state.advancedPlayer.pause().catchError((onError) {
@@ -103,6 +106,14 @@ class SPlayButtonState extends State<SPlayButton> {
       StoreProvider.of<PlayerState>(context)
           .dispatch(Music(state.songlist, state.index + 1, !state.playing));
       playbutton(state);
+    });
+
+    MediaNotification.setListener('closing', () {
+      MediaNotification.hide();
+      state.advancedPlayer.stop();
+      StoreProvider.of<PlayerState>(context)
+          .dispatch(Music(state.songlist, state.index, !state.playing));
+      //print("COOL BITCH");
     });
 
     state.advancedPlayer.onPlayerCompletion.listen((event) {

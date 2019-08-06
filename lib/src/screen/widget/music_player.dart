@@ -48,6 +48,12 @@ class MusicPlayerState extends State<MusicPlayer> {
           PermissionHandler()
               .requestPermissions([PermissionGroup.storage]).then((p) {
             //print(p.toString());
+            if (p == PermissionStatus.granted) {
+              setState(() {
+                storage_access = true;
+              });
+              _getMusicList(context);
+            }
           });
         }
         if (onValue == PermissionStatus.granted) {
@@ -195,17 +201,29 @@ class MusicPlayerState extends State<MusicPlayer> {
                           )
                         : BorderRadius.zero,
                   ),
-                  child: state.expand
-                      ? AnimatedOpacity(
-                          duration: Duration(milliseconds: 500),
-                          child: FMusicMain(),
-                          opacity: state.expand ? 1.0 : 0.0,
+                  child: state.songlist.length <= 0
+                    ? Container(
+                          //color: Colors.red,
+                          alignment: Alignment.center,
+                          child: Text(
+                            "No Music Found",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: "Lato",
+                            ),
+                          ),
                         )
-                      : AnimatedOpacity(
-                          duration: Duration(milliseconds: 500),
-                          child: SMusicMain(),
-                          opacity: state.expand ? 0.0 : 1.0,
-                        ),
+                      : state.expand
+                          ? AnimatedOpacity(
+                              duration: Duration(milliseconds: 500),
+                              child: FMusicMain(),
+                              opacity: state.expand ? 1.0 : 0.0,
+                            )
+                          : AnimatedOpacity(
+                              duration: Duration(milliseconds: 500),
+                              child: SMusicMain(),
+                              opacity: state.expand ? 0.0 : 1.0,
+                            ),
                 ),
               ],
             ),

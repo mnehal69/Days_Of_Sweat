@@ -208,9 +208,11 @@ class Day extends StatelessWidget {
               height: code.percentageToNumber(context, "7%", true),
             ),
             Container(
-              padding: EdgeInsets.only(top: 8, bottom: 8),
-              margin: EdgeInsets.only(
-                  top: code.percentageToNumber(context, "0%", true)),
+              padding: EdgeInsets.only(
+                top: code.percentageToNumber(context, "1%", true),
+                bottom: code.percentageToNumber(context, "0.5%", true),
+              ),
+              height: code.percentageToNumber(context, "8%", true),
               decoration: BoxDecoration(
                 boxShadow: [
                   new BoxShadow(
