@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:audioplayers/audioplayers.dart';
+import 'package:days_of_sweat/redux/actions/main_actions.dart';
 import 'package:days_of_sweat/redux/store/main_store.dart';
 import 'package:days_of_sweat/src/screen/widget/Song/song.dart';
 import 'package:days_of_sweat/src/screen/widget/reuseable.dart';
@@ -6,8 +9,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:media_notification/media_notification.dart';
+import 'package:permission_handler/permission_handler.dart';
 import './widget/title.dart';
 import './widget/Appbar.dart';
 import './widget/Calender.dart';
@@ -27,7 +32,10 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   var currentDate = new DateTime.now();
   var darkMode = false;
   var code = ResusableCode();
+  List<Song> songs = [];
   AppLifecycleState _lastLifecycleState;
+  bool storageAccess = false;
+  bool calenderAccess = false;
   @override
   String volumeText(int volume) {
     if (volume >= 0 && volume <= 100) {
@@ -41,15 +49,96 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     }
   }
 
-  @override
+  void permissionRequired(func) {
+    PermissionHandler().requestPermissions(
+        [PermissionGroup.storage, PermissionGroup.calendar]).then((p) {
+      print("Permission:" + p.toString());
+      if (p[0] == PermissionStatus.granted &&
+          p[1] == PermissionStatus.granted) {
+        setState(() {
+          storageAccess = true;
+          calenderAccess = true;
+        });
+        func(context);
+      } else {
+        checker();
+      }
+    });
+  }
+
+  void checker() async {
+    PermissionStatus storage = await PermissionHandler()
+        .checkPermissionStatus(PermissionGroup.storage);
+    PermissionStatus calender = await PermissionHandler()
+        .checkPermissionStatus(PermissionGroup.calendar);
+    if (storage == PermissionStatus.granted &&
+        calender == PermissionStatus.granted) {
+      //print("CHECK STORAGE YERS");
+      setState(() {
+        storageAccess = true;
+        calenderAccess = true;
+      });
+      _getMusicList(context);
+    } else {
+      Fluttertoast.showToast(
+          msg: "Failed to get access",
+          gravity: ToastGravity.BOTTOM,
+          toastLength: Toast.LENGTH_LONG,
+          timeInSecForIos: 3);
+      setState(() {
+        storageAccess = false;
+        calenderAccess = false;
+      });
+      permissionRequired(_getMusicList);
+    }
+  }
+
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
+    checker();
+  }
+
+  static const MusicList = const MethodChannel('MusicList');
+  static Future<dynamic> allSongs(List<dynamic> songs) async {
+    var completer = new Completer();
+    //print(songs.runtimeType);
+    var mySongs = songs.map((m) => new Song.fromMap(m)).toList();
+    completer.complete(mySongs);
+    return completer.future;
+  }
+
+  Future<dynamic> _getMusicList(dynamic context) async {
+    List<Song> _songs;
+    if (storageAccess) {
+      try {
+        try {
+          _songs = await allSongs(await MusicList.invokeMethod('getMusicList'));
+          print(_songs.toList());
+        } catch (e) {
+          print("Failed to get songs: '${e.message}'.");
+        }
+        //print("music Length: ${_songs.runtimeType}");
+      } on PlatformException catch (e) {
+        print("Failed to get music List ${e.message}");
+      }
+    } else {
+      Fluttertoast.showToast(
+          msg: "Storage Permission Not Accesible",
+          gravity: ToastGravity.BOTTOM,
+          toastLength: Toast.LENGTH_LONG,
+          timeInSecForIos: 3);
+
+      //_getMusicList(context);
+    }
+    setState(() {
+      songs = _songs;
+    });
+    StoreProvider.of<PlayerState>(context).dispatch(Music(_songs, 0, false));
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
+    //WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 

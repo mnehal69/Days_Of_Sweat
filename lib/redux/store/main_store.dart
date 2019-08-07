@@ -17,6 +17,6 @@ class PlayerState {
   bool same = false;
   bool storageAccess = false;
   List<Song> songlist = [];
-  int index = -1;
+  int index = 0;
   String status = 'hidden';
 }

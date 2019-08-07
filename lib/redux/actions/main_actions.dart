@@ -28,7 +28,12 @@ class Music {
       prevState.playing = playing;
     }
     prevState.currentDuration = 0;
-    prevState.totalDuration = prevState.songlist[index].duration;
+    if (songlis.isEmpty) {
+      prevState.totalDuration = 0;
+    } else {
+      prevState.totalDuration = prevState.songlist[index].duration;
+    }
+
     return prevState;
   }
 }

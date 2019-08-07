@@ -118,7 +118,7 @@ class SPlayButtonState extends State<SPlayButton> {
 
     state.advancedPlayer.onPlayerCompletion.listen((event) {
       //print("Play:${state.playing}+Index:${state.index + 1}");
-
+      state.advancedPlayer.release();
       StoreProvider.of<PlayerState>(context)
           .dispatch(Music(state.songlist, state.index + 1, !state.playing));
       //StoreProvider.of<PlayerState>(context)
