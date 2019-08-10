@@ -36,6 +36,7 @@ public class MainActivity extends FlutterActivity {
                     songMap.add(s.toMap());
                   }
                   result.success(songMap);
+                  //System.out.println("COOL THING"+);
                 } else {
                   result.notImplemented();
                 }
@@ -45,7 +46,6 @@ public class MainActivity extends FlutterActivity {
   List<Song> getMusicList() {
     List<Song> music=new ArrayList<>();
     Uri uri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-
     Cursor cur = musicResolver.query(uri, null,
             MediaStore.Audio.Media.IS_MUSIC + " = 1", null, null);
 
@@ -70,6 +70,7 @@ public class MainActivity extends FlutterActivity {
         } while (cur.moveToNext());
       }
       cur.close();
+      //System.out.println("cool");
     }
     return music;
   }

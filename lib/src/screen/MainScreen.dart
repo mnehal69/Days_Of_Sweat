@@ -32,7 +32,6 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   var currentDate = new DateTime.now();
   var darkMode = false;
   var code = ResusableCode();
-  List<Song> songs = [];
   AppLifecycleState _lastLifecycleState;
   bool storageAccess = false;
   bool calenderAccess = false;
@@ -73,7 +72,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
         .checkPermissionStatus(PermissionGroup.calendar);
     if (storage == PermissionStatus.granted &&
         calender == PermissionStatus.granted) {
-      //print("CHECK STORAGE YERS");
+      print("CHECK STORAGE YERS");
       setState(() {
         storageAccess = true;
         calenderAccess = true;
@@ -95,6 +94,8 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
 
   void initState() {
     super.initState();
+    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
+    AudioPlayer.logEnabled = false;
     checker();
   }
 
@@ -103,21 +104,21 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     var completer = new Completer();
     //print(songs.runtimeType);
     var mySongs = songs.map((m) => new Song.fromMap(m)).toList();
+    //print("ALLSONGS:" + mySongs.toString());
     completer.complete(mySongs);
     return completer.future;
   }
 
   Future<dynamic> _getMusicList(dynamic context) async {
     List<Song> _songs;
+    print("GETMUSICLIST:$storageAccess && $calenderAccess");
     if (storageAccess) {
       try {
-        try {
-          _songs = await allSongs(await MusicList.invokeMethod('getMusicList'));
-          print(_songs.toList());
-        } catch (e) {
-          print("Failed to get songs: '${e.message}'.");
-        }
-        //print("music Length: ${_songs.runtimeType}");
+        _songs = await allSongs(await MusicList.invokeMethod('getMusicList'));
+        StoreProvider.of<PlayerState>(context)
+            .dispatch(Music(_songs, 0, false));
+        //print(_songs.toList());
+        print("music Length: ${_songs.length}");
       } on PlatformException catch (e) {
         print("Failed to get music List ${e.message}");
       }
@@ -127,13 +128,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
           gravity: ToastGravity.BOTTOM,
           toastLength: Toast.LENGTH_LONG,
           timeInSecForIos: 3);
-
-      //_getMusicList(context);
     }
-    setState(() {
-      songs = _songs;
-    });
-    StoreProvider.of<PlayerState>(context).dispatch(Music(_songs, 0, false));
   }
 
   @override
@@ -142,19 +137,10 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     super.dispose();
   }
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    setState(() {
-      _lastLifecycleState = state;
-    });
-  }
+
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
-    //print("LAST LIFE CYCLE:$_lastLifecycleState");
-    //MediaNotification.hide();
-    AudioPlayer.logEnabled = false;
     return Scaffold(
 //      key: _scaffoldKey,
       // bottomSheet: Container(),

@@ -43,12 +43,9 @@ class SCoverState extends State<SCover> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return new StoreConnector<PlayerState, PlayerState>(
       converter: (store) => store.state,
+      onInit: (store) => this.isplaying(store.state.playing),
+      onWillChange: (state) => this.isplaying(state.playing),
       builder: (context, state) {
-        isplaying(state.playing);
-        // if (state.songlist.length > 0) {
-        //   print(state.songlist[0].albumArt);
-        // }
-        //print("CANCELLED:${state.songlist[0].album}");
         return AnimatedBuilder(
           animation: rotationController,
           builder: (context, child) {
@@ -56,7 +53,7 @@ class SCoverState extends State<SCover> with SingleTickerProviderStateMixin {
               //color: Colors.orange,
               child: Stack(
                 alignment: Alignment.centerLeft,
-                children: <Widget>[
+                children: [
                   Container(
                     decoration: BoxDecoration(
                       // color: Colors.white,

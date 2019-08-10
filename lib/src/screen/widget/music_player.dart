@@ -36,11 +36,12 @@ class MusicPlayerState extends State<MusicPlayer> {
       converter: (store) => store.state,
       builder: (context, state) {
         state.audioCache.fixedPlayer = state.advancedPlayer;
+        print("FULLMUSICMAIN:${state.expand} && ${state.dragging}");
         return GestureDetector(
           onVerticalDragUpdate: (detail) {
+            StoreProvider.of<PlayerState>(context)
+                .dispatch(Expanding(true, false));
             if (!dragged) {
-              StoreProvider.of<PlayerState>(context).dispatch(Expanding(true));
-
               if (detail.delta.dy < 0) {
                 setState(() {
                   dragged = true;
@@ -48,7 +49,7 @@ class MusicPlayerState extends State<MusicPlayer> {
               }
               if (detail.delta.dy > 0) {
                 StoreProvider.of<PlayerState>(context)
-                    .dispatch(Expanding(false));
+                    .dispatch(Expanding(false, true));
                 setState(() {
                   dragged = true;
                 });
@@ -56,6 +57,8 @@ class MusicPlayerState extends State<MusicPlayer> {
             }
           },
           onVerticalDragEnd: (detail) {
+            StoreProvider.of<PlayerState>(context)
+                .dispatch(Expanding(true, false));
             setState(() {
               dragged = false;
             });
@@ -134,11 +137,7 @@ class MusicPlayerState extends State<MusicPlayer> {
                           ),
                         )
                       : state.expand
-                          ? AnimatedOpacity(
-                              duration: Duration(milliseconds: 500),
-                              child: FMusicMain(),
-                              opacity: state.expand ? 1.0 : 0.0,
-                            )
+                          ? FMusicMain()
                           : AnimatedOpacity(
                               duration: Duration(milliseconds: 500),
                               child: SMusicMain(),

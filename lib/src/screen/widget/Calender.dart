@@ -196,8 +196,6 @@ class CalenderState extends State<Calender> {
   @override
   Widget build(BuildContext context) {
     var dark = widget.darkMode;
-    //print("WELCOME\n ${listOfDays[2][1]["day"]}");
-    //print(this.clicked);
     return Table(
       children: List.generate(listOfDays.length,
           (index) => buildRows(listOfDays[index], dark, index)),

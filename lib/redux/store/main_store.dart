@@ -19,4 +19,5 @@ class PlayerState {
   List<Song> songlist = [];
   int index = 0;
   String status = 'hidden';
+  bool dragging=false;
 }

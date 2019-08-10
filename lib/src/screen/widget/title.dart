@@ -8,6 +8,7 @@ class TitleBar extends StatefulWidget {
   final int days;
   final darkMode;
   TitleBar({this.days, this.darkMode});
+  
 
   @override
   State<StatefulWidget> createState() {
@@ -21,6 +22,7 @@ class TitleBarState extends State<TitleBar> {
   var _batteryState;
   var _batteryLevel;
 
+    
   initState() {
     super.initState();
     _battery.batteryLevel.then((level) {
@@ -108,8 +110,10 @@ class TitleBarState extends State<TitleBar> {
                     ? _batteryState == BatteryState.charging
                         ? Icon(
                             FontAwesomeIcons.bolt,
-                            size: batteryBoxHeight - 5,
-                            color: Colors.white,
+                            size: batteryBoxHeight - 4,
+                            color: this._batteryLevel < 50
+                                ? Colors.black
+                                : Colors.yellow,
                           )
                         : Container()
                     : Container(),

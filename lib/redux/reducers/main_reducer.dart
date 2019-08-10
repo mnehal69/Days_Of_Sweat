@@ -13,7 +13,7 @@ PlayerState playerStateReducer(PlayerState prevState, dynamic action) {
         prevState, action.nextbuttonPress, action.prevbuttonPress);
   }
   if (action is Expanding) {
-    return action.expanding(prevState, action.expanded);
+    return action.expanding(prevState, action.expanded,action.dragging);
   }
   if (action is Audioplayer) {
     return action.durationInPlay(

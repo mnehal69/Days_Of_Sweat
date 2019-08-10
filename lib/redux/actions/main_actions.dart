@@ -63,9 +63,11 @@ class Permission {
 
 class Expanding {
   final bool expanded;
-  Expanding(this.expanded);
-  PlayerState expanding(PlayerState prevState, bool expanding) {
+  final bool dragging;
+  Expanding(this.expanded,this.dragging);
+  PlayerState expanding(PlayerState prevState, bool expanding,bool drag) {
     prevState.expand = expanding;
+    prevState.dragging=drag;
     return prevState;
   }
 }
