@@ -35,19 +35,9 @@ class MusicPlayerState extends State<MusicPlayer> {
     return new StoreConnector<PlayerState, PlayerState>(
       converter: (store) => store.state,
       onWillChange: (state) {
-        if (state.fullPlayerDispose && counter == 0) {
-          if (state.playing) {
-            state.advancedPlayer.play(
-              state.currenturi,
-              isLocal: true,
-              stayAwake: true,
-              position: Duration(milliseconds: state.currentDuration),
-            );
-          } else {
-            state.advancedPlayer.setUrl(state.currenturi, isLocal: true);
-            state.advancedPlayer
-                .seek(Duration(milliseconds: state.currentDuration));
-          }
+        print(
+            "First Time: ${state.counter} && Dispose: ${state.fullPlayerDispose}====${state.fullPlayerDispose && state.counter == 0}");
+        if (state.fullPlayerDispose && state.counter == 0) {
           state.advancedPlayer.onAudioPositionChanged.listen((duration) {
             StoreProvider.of<PlayerState>(context)
                 .dispatch(AudioPlaying(state.playing, duration.inMilliseconds));
@@ -56,10 +46,8 @@ class MusicPlayerState extends State<MusicPlayer> {
             StoreProvider.of<PlayerState>(context)
                 .dispatch(Player(isAlbum: state.isAlbum, index: state.index));
           });
-          print("PLAYING:${state.playing}");
-          setState(() {
-            counter++;
-          });
+          StoreProvider.of<PlayerState>(context).dispatch(Dispose(
+              dispose: state.fullPlayerDispose, counter: state.counter + 1));
         }
       },
       builder: (context, state) {

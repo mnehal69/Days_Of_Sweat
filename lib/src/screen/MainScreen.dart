@@ -104,6 +104,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     super.initState();
     //SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
     //FlutterStatusbarcolor.setStatusBarColor(Colors.white);
+
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
           // For iOS
@@ -203,6 +204,9 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
       // bottomSheet: Container(),
       body: new StoreConnector<PlayerState, PlayerState>(
         converter: (store) => store.state,
+        onInit: (store) {
+          // code.mediaNotification(context, store.state);
+        },
         builder: (context, state) {
           return Material(
             child: Container(

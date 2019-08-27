@@ -11,7 +11,7 @@ PlayerState playerStateReducer(PlayerState prevState, dynamic action) {
   }
 
   if (action is Dispose) {
-    return action.isDispose(prevState, action.dispose);
+    return action.isDispose(prevState, action.dispose, action.counter);
   }
   if (action is AudioPlaying) {
     return action.audioPlaying(

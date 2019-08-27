@@ -25,71 +25,25 @@ class FPlayButtonState extends State<FPlayButton> {
     super.dispose();
   }
 
-  void playbutton(PlayerState state) async {
-    StoreProvider.of<PlayerState>(context).dispatch(
-      AudioPlaying(!state.playing, state.currentDuration),
-    );
+  // void playbutton(PlayerState state) async {
+  //   StoreProvider.of<PlayerState>(context).dispatch(
+  //     AudioPlaying(!state.playing, state.currentDuration),
+  //   );
 
-    if (state.playing) {
-      state.advancedPlayer.resume();
-
-      try {
-        await MediaNotification.show(
-          title: state.currentTitle,
-          author: state.currentArtist,
-          play: state.playing,
-          albumArt: state.currentAlbum,
-        );
-      } on PlatformException {}
-    } else {
-      state.advancedPlayer.pause().catchError((onError) {
-        print("SOMTHING WRONG:$onError");
-        state.advancedPlayer.release();
-      });
-      try {
-        await MediaNotification.hide();
-      } on PlatformException {}
-    }
-    MediaNotification.setListener('play', () {
-      state.advancedPlayer.resume();
-      StoreProvider.of<PlayerState>(context).dispatch(
-        AudioPlaying(true, state.currentDuration),
-      );
-    });
-    MediaNotification.setListener('pause', () {
-      state.advancedPlayer.pause();
-      StoreProvider.of<PlayerState>(context).dispatch(
-        AudioPlaying(false, state.currentDuration),
-      );
-    });
-    MediaNotification.setListener('prev', () {
-      StoreProvider.of<PlayerState>(context).dispatch(
-        Player(isAlbum: state.isAlbum, index: state.index - 1),
-      );
-      state.controller.animateToPage(state.index - 1,
-          curve: Curves.ease, duration: Duration(milliseconds: 500));
-    });
-    MediaNotification.setListener('next', () {
-      StoreProvider.of<PlayerState>(context).dispatch(
-        Player(isAlbum: state.isAlbum, index: state.index + 1),
-      );
-      state.controller.animateToPage(state.index + 1,
-          curve: Curves.ease, duration: Duration(milliseconds: 500));
-    });
-
-    MediaNotification.setListener('closing', () {
-      MediaNotification.hide();
-      state.advancedPlayer.stop();
-      StoreProvider.of<PlayerState>(context)
-          .dispatch(AudioPlaying(false, state.currentDuration));
-      //print("COOL BITCH");
-    });
-  }
+  //   if (state.playing) {
+  //     state.advancedPlayer.resume();
+  //   } else {
+  //     state.advancedPlayer.pause().catchError((onError) {
+  //       print("SOMTHING WRONG:$onError");
+  //       state.advancedPlayer.release();
+  //     });
+  //   }
+  // }
 
   Widget play(context, PlayerState state) {
     return GestureDetector(
       onTap: () {
-        this.playbutton(state);
+        code.playbutton(context, state);
       },
       child: Container(
         width: code.percentageToNumber(context, "15%", false),
@@ -111,7 +65,7 @@ class FPlayButtonState extends State<FPlayButton> {
   Widget pause(context, PlayerState state) {
     return GestureDetector(
       onTap: () {
-        this.playbutton(state);
+        code.playbutton(context, state);
       },
       child: Container(
         width: code.percentageToNumber(context, "17%", false),

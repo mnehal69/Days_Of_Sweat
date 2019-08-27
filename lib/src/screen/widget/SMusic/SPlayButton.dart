@@ -47,6 +47,22 @@ class SPlayButtonState extends State<SPlayButton> {
     super.dispose();
   }
 
+  // void playbutton(PlayerState state) async {
+  //   StoreProvider.of<PlayerState>(context).dispatch(
+  //     AudioPlaying(!state.playing, state.currentDuration),
+  //   );
+
+  //   if (state.playing) {
+  //     state.advancedPlayer.resume();
+  //     state.advancedPlayer.seek(Duration(milliseconds: state.currentDuration));
+  //   } else {
+  //     state.advancedPlayer.pause().catchError((onError) {
+  //       print("SOMTHING WRONG:$onError");
+  //       state.advancedPlayer.release();
+  //     });
+  //   }
+  // }
+
   Map darkMode(bool darkmode) {
     if (darkmode) {
       return {
@@ -136,7 +152,7 @@ class SPlayButtonState extends State<SPlayButton> {
     return new StoreConnector<PlayerState, PlayerState>(
       converter: (store) => store.state,
       onWillChange: (state) {
-        if (!state.playing && state.fullPlayerDispose) {
+        if (!state.playing && state.fullPlayerDispose && dragging) {
           StoreProvider.of<PlayerState>(context).dispatch(ChangeSong(btn: 0));
           setState(() {
             skewX = 0;
@@ -147,7 +163,7 @@ class SPlayButtonState extends State<SPlayButton> {
         }
       },
       builder: (context, state) {
-        return state.playing
+        return !state.playing
             ? AnimatedContainer(
                 duration: Duration(milliseconds: 100),
                 transform: Matrix4.skew(skewX, skewY),
@@ -158,6 +174,7 @@ class SPlayButtonState extends State<SPlayButton> {
                     bottomMargin), //bottom:20 upar volume kay leye
                 child: GestureDetector(
                   // onTap: () => this.playbutton(state),
+                  onTap: () => code.playbutton(context, state),
                   onHorizontalDragEnd: (details) {
                     StoreProvider.of<PlayerState>(context)
                         .dispatch(ChangeSong(btn: 0));
@@ -250,6 +267,7 @@ class SPlayButtonState extends State<SPlayButton> {
               )
             : GestureDetector(
                 // onTap: () => this.playbutton(state),
+                onTap: () => code.playbutton(context, state),
                 child: playing(state),
               );
       },

@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_xlider/flutter_xlider.dart';
 import 'package:days_of_sweat/redux/actions/main_actions.dart';
+import 'package:media_notification/media_notification.dart';
 import 'package:volume/volume.dart';
 import 'dart:async';
 
@@ -131,7 +132,7 @@ class PlayerScreenState extends State<PlayerScreen> {
       converter: (store) => store.state,
       onInit: (store) {
         StoreProvider.of<PlayerState>(context)
-            .dispatch(Dispose(dispose: false));
+            .dispatch(Dispose(dispose: false, counter: 1));
       },
       onDidChange: (state) {
         if (state.volumeBarVisible) {
@@ -148,7 +149,7 @@ class PlayerScreenState extends State<PlayerScreen> {
         return WillPopScope(
           onWillPop: () {
             StoreProvider.of<PlayerState>(context)
-                .dispatch(Dispose(dispose: true));
+                .dispatch(Dispose(dispose: true, counter: 0));
             return new Future(() => true);
           },
           child: Scaffold(

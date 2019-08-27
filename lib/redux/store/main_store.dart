@@ -14,6 +14,7 @@ class PlayerState {
   int volume = 100;
 
   bool fullPlayerDispose = false;
+  int counter=0;
   AudioPlayer advancedPlayer = new AudioPlayer();
   AudioCache audioCache = new AudioCache();
 

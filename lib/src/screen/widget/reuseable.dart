@@ -43,23 +43,6 @@ class ResusableCode {
     return "$minutes:$second";
   }
 
-  void showNotification(PlayerState state) async {
-    try {
-      await MediaNotification.show(
-        title: state.currentTitle,
-        author: state.currentArtist,
-        play: state.playing,
-        albumArt: state.currentAlbum,
-      );
-    } on PlatformException {}
-  }
-
-  void closeNotification() async {
-    try {
-      await MediaNotification.hide();
-    } on PlatformException {}
-  }
-
   void mediaNotification(context, PlayerState state) {
     MediaNotification.setListener('play', () {
       state.advancedPlayer.resume();
@@ -100,7 +83,6 @@ class ResusableCode {
   void playingFromintial(context, PlayerState state, bool isAlbum) async {
     StoreProvider.of<PlayerState>(context)
         .dispatch(Player(index: 0, isAlbum: isAlbum));
-    this.showNotification(state);
     state.advancedPlayer.onAudioPositionChanged.listen((duration) {
       StoreProvider.of<PlayerState>(context)
           .dispatch(AudioPlaying(state.playing, duration.inMilliseconds));
@@ -119,7 +101,7 @@ class ResusableCode {
     // print("Random No:$randomNo");
     StoreProvider.of<PlayerState>(context)
         .dispatch(Player(index: randomNo, isAlbum: isAlbum));
-
+    // this.showNotification(state);
     state.advancedPlayer.onAudioPositionChanged.listen((duration) {
       StoreProvider.of<PlayerState>(context)
           .dispatch(AudioPlaying(state.playing, duration.inMilliseconds));
@@ -169,6 +151,22 @@ class ResusableCode {
         permission = true;
       }
     });
+  }
+
+  void playbutton(context, PlayerState state) async {
+    StoreProvider.of<PlayerState>(context).dispatch(
+      AudioPlaying(!state.playing, state.currentDuration),
+    );
+
+    if (state.playing) {
+      state.advancedPlayer.resume();
+      state.advancedPlayer.seek(Duration(milliseconds: state.currentDuration));
+    } else {
+      state.advancedPlayer.pause().catchError((onError) {
+        print("SOMTHING WRONG:$onError");
+        state.advancedPlayer.release();
+      });
+    }
   }
 
   double percentageToNumber(BuildContext context, String val, bool height) {

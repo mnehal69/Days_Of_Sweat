@@ -24,12 +24,14 @@ class PlayerController {
 
 class Dispose {
   final bool dispose;
-  Dispose({this.dispose});
-  PlayerState isDispose(PlayerState prevState, bool dispose) {
+  final int counter;
+  Dispose({this.dispose, this.counter});
+  PlayerState isDispose(PlayerState prevState, bool dispose, int count) {
     prevState.fullPlayerDispose = dispose;
-    if (dispose) {
-      prevState.advancedPlayer.release();
-    }
+    prevState.counter = count;
+    // if (dispose) {
+    //   prevState.advancedPlayer.release();
+    // }
     return prevState;
   }
 }
