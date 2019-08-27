@@ -8,7 +8,6 @@ class TitleBar extends StatefulWidget {
   final int days;
   final darkMode;
   TitleBar({this.days, this.darkMode});
-  
 
   @override
   State<StatefulWidget> createState() {
@@ -22,7 +21,6 @@ class TitleBarState extends State<TitleBar> {
   var _batteryState;
   var _batteryLevel;
 
-    
   initState() {
     super.initState();
     _battery.batteryLevel.then((level) {
@@ -166,7 +164,7 @@ class TitleBarState extends State<TitleBar> {
                   child: Container(
                     alignment: Alignment.center,
                     margin: EdgeInsets.only(
-                      left: code.percentageToNumber(context, "15%", false),
+                      left: code.percentageToNumber(context, "10%", false),
                     ),
                     child: RichText(
                       text: TextSpan(
@@ -196,7 +194,7 @@ class TitleBarState extends State<TitleBar> {
                     ),
                   ),
                 ),
-                batteryPercentFinder(context)
+                //batteryPercentFinder(context)
               ],
             ),
           ),

@@ -25,13 +25,13 @@ dependencies:
   cupertino_icons: ^0.1.2
   flutter_signin_button: ^0.2.8
   font_awesome_flutter: ^8.4.0
-  fluttertoast: ^2.1.4
+  toast: ^0.1.5
   local_auth: ^0.5.2+3
   battery: ^0.3.0+5
   intl: ^0.15.8
   fluttery_audio: ^0.0.4
   percent_indicator: "^2.1.1"
-  flutter_redux: ^0.5.3 
+  flutter_redux: ^0.5.3
   redux: ^3.0.0
   flutter_redux_dev_tools: ^0.3.0
   youtube_extractor: ^1.0.3
@@ -39,9 +39,16 @@ dependencies:
   flare_flutter: ^1.5.5
   audioplayers: ^0.13.1
   path_provider: ^1.2.0
-  media_metadata_plugin: ^0.0.5
+  # media_metadata_plugin: ^0.0.5
   permission_handler: ^3.2.1+1
   media_notification: ^0.0.5
+  auto_size_text: ^2.1.0
+  flutter_redux_navigation: ^0.4.1
+  marquee_flutter: ^0.1.4
+  flutter_xlider: ^2.5.2
+
+
+
 
 
 

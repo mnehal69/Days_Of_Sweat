@@ -29,6 +29,7 @@ class CalenderState extends State<Calender> {
   var clickedcounter = 0;
   var changed = false;
   CalenderState({this.clicked});
+
   @override
   void initState() {
     super.initState();
@@ -138,7 +139,7 @@ class CalenderState extends State<Calender> {
       showDoneDays();
     }
   }
-
+  
   selectedChange(row, column, cellTitle, empty) {
     //print("title:$cellTitle + dayList:${dayList[column].substring(0, 1)}= ${cellTitle.toString().contains(dayList[column].substring(0, 1))}");
     if (!cellTitle.toString().contains(dayList[column].substring(0, 1)) &&

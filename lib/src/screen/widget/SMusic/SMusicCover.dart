@@ -74,18 +74,13 @@ class SCoverState extends State<SCover> with SingleTickerProviderStateMixin {
                     margin: EdgeInsets.only(
                         top: code.percentageToNumber(context, "1%", true),
                         left: code.percentageToNumber(context, "1%", false)),
-                    width: state.expand
-                        ? code.percentageToNumber(context, "75%", false)
-                        : code.percentageToNumber(context, "15%", false),
-                    height: state.expand
-                        ? code.percentageToNumber(context, "45%", true)
-                        : code.percentageToNumber(context, "11%", true),
+                    width: code.percentageToNumber(context, "15%", false),
+                    height: code.percentageToNumber(context, "11%", true),
 
-                    child: state.index > -1
-                        ? Image.file(
-                            new File.fromUri(Uri.parse(
-                                state.songlist[state.index].albumArt)),
-                          )
+                    child: state.currentAlbum != null
+                        ? Image.file(new File.fromUri(
+                            Uri.parse(state.currentAlbum),
+                          ))
                         : Image.asset("resources/no_coverM.png"),
                     // decoration: BoxDecoration(
                     //     color: Colors.red,

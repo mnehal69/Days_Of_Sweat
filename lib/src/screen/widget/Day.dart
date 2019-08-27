@@ -63,7 +63,7 @@ class Day extends StatelessWidget {
         "background": Colors.transparent,
         "FontColor": Colors.black,
         "SelectedColorBackgroundBegin": HexColor("#FF0031"),
-        "SelectedColorBackgroundEnd": HexColor("##FF4F8C"),
+        "SelectedColorBackgroundEnd": HexColor("#FF4F8C"),
         "SelectedColorShadow": Color.fromRGBO(255, 0, 49, 0.4),
       };
     }
@@ -187,7 +187,6 @@ class Day extends StatelessWidget {
       );
     }
   }
-
   @override
   Widget build(BuildContext context) {
     //print("Day:$day + show:$show");

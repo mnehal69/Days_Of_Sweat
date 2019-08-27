@@ -15,6 +15,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.13.1"
+  auto_size_text:
+    dependency: "direct main"
+    description:
+      name: auto_size_text
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.0"
   battery:
     dependency: "direct main"
     description:
@@ -56,7 +63,7 @@ packages:
       name: crypto
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.6"
+    version: "2.1.2"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -97,6 +104,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.3.0"
+  flutter_redux_navigation:
+    dependency: "direct main"
+    description:
+      name: flutter_redux_navigation
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.4.1"
   flutter_signin_button:
     dependency: "direct main"
     description:
@@ -109,13 +123,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  fluttertoast:
+  flutter_xlider:
     dependency: "direct main"
     description:
-      name: fluttertoast
+      name: flutter_xlider
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.2.11"
+    version: "2.5.2"
   fluttery_audio:
     dependency: "direct main"
     description:
@@ -165,6 +179,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.11.3+2"
+  marquee_flutter:
+    dependency: "direct main"
+    description:
+      name: marquee_flutter
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.4"
   matcher:
     dependency: transitive
     description:
@@ -172,13 +193,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.12.5"
-  media_metadata_plugin:
-    dependency: "direct main"
-    description:
-      name: media_metadata_plugin
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.0.5"
   media_notification:
     dependency: "direct main"
     description:
@@ -220,14 +234,14 @@ packages:
       name: percent_indicator
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.1"
+    version: "2.1.1+1"
   permission_handler:
     dependency: "direct main"
     description:
       name: permission_handler
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.2.1+1"
+    version: "3.2.2"
   petitparser:
     dependency: transitive
     description:
@@ -310,6 +324,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.5"
+  toast:
+    dependency: "direct main"
+    description:
+      name: toast
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.5"
   typed_data:
     dependency: transitive
     description:

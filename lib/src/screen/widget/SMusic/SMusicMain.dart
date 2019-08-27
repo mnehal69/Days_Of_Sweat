@@ -15,33 +15,17 @@ class SMusicMain extends StatelessWidget {
     }
   }
 
-  String durationfromMilliSeconds(int mili) {
-    // int milliseconds = 205427;
-    DateTime total = new DateTime.fromMillisecondsSinceEpoch(mili);
-    int minutes = total.minute;
-    int second = total.second;
-    //print("Minutes:$minutes.$second");
-    if (second < 10) {
-      //print("TOTAL:${second}");
-      return "$minutes:0$second";
-    }
-    return "$minutes:$second";
-  }
-
   @override
   Widget build(BuildContext context) {
     return new StoreConnector<PlayerState, PlayerState>(
       converter: (store) => store.state,
       builder: (context, state) {
         return Row(
-          // mainAxisAlignment: MainAxisAlignment.center,
-          // crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Container(
               margin: EdgeInsets.only(
                 left: code.percentageToNumber(context, "6%", false),
               ),
-              //color: Colors.yellow,
               height: code.percentageToNumber(context, "10%", true),
               width: code.percentageToNumber(context, "20%", false),
               // child: Image.asset("resources/Add.png"),
@@ -62,9 +46,7 @@ class SMusicMain extends StatelessWidget {
                     padding: EdgeInsets.all(
                         code.percentageToNumber(context, "0.2%", true)),
                     child: Text(
-                      state.index > -1
-                          ? titleSlicer(state.songlist[state.index].title)
-                          : "",
+                      titleSlicer(state.currentTitle),
                       style: TextStyle(
                           fontFamily: "Roboto-Bold",
                           fontWeight: FontWeight.bold,
@@ -75,7 +57,7 @@ class SMusicMain extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    state.index > -1 ? state.songlist[state.index].artist : "",
+                    state.currentArtist,
                     style: TextStyle(
                       fontFamily: "Roboto-Light",
                       color: Colors.white,
@@ -87,7 +69,7 @@ class SMusicMain extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        durationfromMilliSeconds(state.currentDuration),
+                        code.durationfromMilliSeconds(state.currentDuration),
                         style: TextStyle(
                           fontFamily: "Roboto-Light",
                           color: Colors.white,
@@ -96,7 +78,8 @@ class SMusicMain extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        "  " + durationfromMilliSeconds(state.totalDuration),
+                        "  " +
+                            code.durationfromMilliSeconds(state.totalDuration),
                         style: TextStyle(
                           fontFamily: "Roboto-Light",
                           color: Colors.white54,
@@ -118,6 +101,7 @@ class SMusicMain extends StatelessWidget {
               child: Align(
                 alignment: Alignment.topCenter,
                 child: SPlayer(),
+                // child: Container(),
               ),
             ),
           ],

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:toast/toast.dart';
 import './widget/login_button.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:flutter/services.dart';
@@ -80,7 +80,8 @@ class SplashScreenState extends State<SplashScreen>
       if (canCheckBiometric) {
         _authorizeNow();
       } else {
-        Fluttertoast.showToast(msg: "No Fingerprint Sensor in this device");
+        Toast.show("No Fingerprint Sensor in this device", context,
+            duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
       }
     });
   }
@@ -111,11 +112,13 @@ class SplashScreenState extends State<SplashScreen>
   }
 
   loginOrSignInWithFacebook() {
-    Fluttertoast.showToast(msg: "FACEBOOK BUTTON CLICKED");
+    Toast.show("FACEBOOK BUTTON CLICKED", context,
+        duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
   }
 
   loginOrSignInWithGoogle() {
-    Fluttertoast.showToast(msg: "Google BUTTON CLICKED");
+    Toast.show("GOOGLE BUTTON CLICKED", context,
+        duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
   }
 
   // void fingerprintbottomsheet() {

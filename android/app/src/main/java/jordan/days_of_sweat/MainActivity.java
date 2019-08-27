@@ -2,9 +2,15 @@ package jordan.days_of_sweat;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+
 import io.flutter.app.FlutterActivity;
 
 
@@ -24,6 +30,8 @@ public class MainActivity extends FlutterActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     GeneratedPluginRegistrant.registerWith(this);
+
+
     musicResolver = getContentResolver();
     new MethodChannel(getFlutterView(), "MusicList").setMethodCallHandler(
             new MethodChannel.MethodCallHandler() {
@@ -37,7 +45,36 @@ public class MainActivity extends FlutterActivity {
                   }
                   result.success(songMap);
                   //System.out.println("COOL THING"+);
-                } else {
+                }
+
+//                else if(call.method.equals("getArtistList")){
+//                  List<Song> musicList = getMusicList();
+////                  ArrayList<HashMap> songMap = new ArrayList<>();
+////                  for (Song s : musicList) {
+////                    songMap.add(s.toMap());
+////                  }
+//                  List<String> artistDone=new ArrayList<>();
+//                  List<List<Song>> ArtistList=new ArrayList<>();
+//                  for(int i=0;i<musicList.size();i++) {
+//                    List<Song> artist = new ArrayList<>();
+//                    String artistName = musicList.get(i).artist;
+//                    if (!artistDone.contains(artistName)) {
+//                      for (int j = 0; j < musicList.size(); j++) {
+//                        if (musicList.get(j).artist.compareTo(artistName) == 0) {
+//                          artist.add(musicList.get(i));
+//                        }
+//                      }
+//                      artistDone.add(artistName);
+//                    }
+//                    ArtistList.add(artist);
+//                  }
+//                  //                  ArrayList<HashMap> songMap = new ArrayList<>();
+////                  for (Song s : musicList) {
+////                    songMap.add(s.toMap());
+////                  }
+//                  result.success(songMap);
+//                }
+                else {
                   result.notImplemented();
                 }
               }
