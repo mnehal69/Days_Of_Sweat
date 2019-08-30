@@ -1,5 +1,6 @@
-import 'package:days_of_sweat/src/screen/widget/hex_color.dart';
-import 'package:days_of_sweat/src/screen/widget/reuseable.dart';
+
+import 'package:days_of_sweat/src/screen/common/ReusableCode.dart';
+import 'package:days_of_sweat/src/screen/common/hex_color.dart';
 import 'package:flutter/material.dart';
 import 'package:battery/battery.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';

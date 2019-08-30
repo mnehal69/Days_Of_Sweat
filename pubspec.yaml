@@ -46,7 +46,15 @@ dependencies:
   flutter_redux_navigation: ^0.4.1
   marquee_flutter: ^0.1.4
   flutter_xlider: ^2.5.2
-
+  sqflite: ^1.1.6+4
+  redux_remote_devtools: ^0.0.9
+  json_annotation: ^3.0.0
+  eva_icons_flutter: ^1.0.4
+#   flutter_launcher_icons: ^0.7.2+1
+# flutter_icons:
+#   image_path: "icon/icon.png" 
+#   android: true
+#   ios: true
 
 
 

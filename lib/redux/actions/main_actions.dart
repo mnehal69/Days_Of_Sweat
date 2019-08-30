@@ -1,4 +1,5 @@
-import 'package:days_of_sweat/src/screen/widget/Song/song.dart';
+import 'package:days_of_sweat/src/screen/Database/PlayList.dart';
+import 'package:days_of_sweat/src/screen/MusicPlayer/Local/common/song.dart';
 import 'package:flutter/widgets.dart';
 import './../store/main_store.dart';
 
@@ -9,6 +10,7 @@ class AudioPlaying {
   PlayerState audioPlaying(PlayerState prevState, bool playing, int duration) {
     prevState.playing = playing;
     prevState.currentDuration = duration;
+    // prevState.changed = false;
     return prevState;
   }
 }
@@ -29,6 +31,7 @@ class Dispose {
   PlayerState isDispose(PlayerState prevState, bool dispose, int count) {
     prevState.fullPlayerDispose = dispose;
     prevState.counter = count;
+
     // if (dispose) {
     //   prevState.advancedPlayer.release();
     // }
@@ -41,51 +44,42 @@ class Player {
   bool isAlbum;
   int index;
   int duration;
-  Player({this.isAlbum, this.index, this.duration = 0});
-  PlayerState intialized(
-      PlayerState prevState, bool isAlbum, int indexno, int duration) {
+  dynamic list;
+  Player({this.isAlbum, this.index, this.duration = 0, this.list = 0});
+  PlayerState intialized(PlayerState prevState, bool isAlbum, int indexno,
+      int duration, dynamic list) {
     int index = indexno;
-    // print(
-    // "List:${prevState.artistSongList[prevState.currentAlbumIndex].toString()}");
+    List listvar;
+    if (list == 0) {
+      if (isAlbum) {
+        listvar = new List<Song>.from(
+            prevState.artistSongList[prevState.currentAlbumIndex]);
+      } else {
+        listvar = new List<Song>.from(prevState.songlist);
+      }
+    } else {
+      listvar = new List<Song>.from(list);
+    }
+    prevState.currentPlayingList = listvar;
     prevState.isAlbum = isAlbum;
     prevState.index = index;
     prevState.playing = true;
     prevState.currentDuration = 0;
     prevState.last = false;
     prevState.totalDuration = 0;
-    if (isAlbum) {
-      prevState.length =
-          prevState.artistSongList[prevState.currentAlbumIndex].length;
-      if (prevState.index >
-          prevState.artistSongList[prevState.currentAlbumIndex].length - 1) {
-        prevState.index = 0;
-        prevState.last = true;
-        index = 0;
-      }
-      prevState.totalDuration =
-          prevState.artistSongList[prevState.currentAlbumIndex][index].duration;
-
-      prevState.currentTitle =
-          prevState.artistSongList[prevState.currentAlbumIndex][index].title;
-      prevState.currenturi =
-          prevState.artistSongList[prevState.currentAlbumIndex][index].uri;
-      prevState.currentArtist =
-          prevState.artistSongList[prevState.currentAlbumIndex][index].artist;
-      prevState.currentAlbum =
-          prevState.artistSongList[prevState.currentAlbumIndex][index].albumArt;
-    } else {
-      prevState.length = prevState.songlist.length;
-      if (prevState.index > prevState.songlist.length - 1) {
-        prevState.index = 0;
-        prevState.last = true;
-        index = 0;
-      }
-      prevState.totalDuration = prevState.songlist[index].duration;
-      prevState.currentTitle = prevState.songlist[index].title;
-      prevState.currenturi = prevState.songlist[index].uri;
-      prevState.currentArtist = prevState.songlist[index].artist;
-      prevState.currentAlbum = prevState.songlist[index].albumArt;
+    prevState.length = listvar.length;
+    if (prevState.index > listvar.length - 1) {
+      prevState.index = 0;
+      prevState.last = true;
+      index = 0;
     }
+    prevState.changed = true;
+    prevState.totalDuration = listvar[index].duration;
+    prevState.currentId = listvar[index].id;
+    prevState.currentTitle = listvar[index].title;
+    prevState.currenturi = listvar[index].uri;
+    prevState.currentArtist = listvar[index].artist;
+    prevState.currentAlbum = listvar[index].albumArt;
 
     prevState.advancedPlayer.release();
     prevState.advancedPlayer.play(
@@ -94,10 +88,7 @@ class Player {
       stayAwake: true,
       position: Duration(milliseconds: duration),
     );
-    // prevState.advancedPlayer.onPlayerError.listen((msg) {
-    //   print('audioPlayer error : $msg');
-    //   this.intialized(prevState, isAlbum, 0);
-    // });
+
     return prevState;
   }
 }
@@ -107,6 +98,13 @@ class ArtistAlbum {
   final List<List<Song>> artistSongList;
   final int albumindex;
   ArtistAlbum(this.artistList, this.artistSongList, this.albumindex);
+  toJson() {
+    return {
+      'artistList': this.artistList.toString(),
+      "artistSongList": this.artistSongList.toString(),
+      "albumIndex": this.albumindex
+    };
+  }
 
   PlayerState intialized(PlayerState prevState, List<List<Song>> artistSong,
       final List<List<String>> artistList, int albumIndex) {
@@ -124,12 +122,37 @@ class SongList {
   final int index;
 
   SongList(this.songlist, this.index);
+  toJson() {
+    return {
+      'SongList': this.songlist.toString(),
+      "index": this.index,
+    };
+  }
+
   PlayerState intialized(PlayerState prevState, List<Song> song, int index) {
+    List<Song> shuffled = new List<Song>.from(song);
     prevState.songlist = song;
     prevState.index = index;
+    shuffled.shuffle();
+    shuffled.shuffle();
+    prevState.playList.add(shuffled);
+    prevState.type.add("Random");
     return prevState;
   }
 }
+
+// List shuffle(List items) {
+//   var random = new Random();
+//   // Go through all elements.
+//   for (var i = items.length - 1; i > 0; i--) {
+//     // Pick a pseudorandom number according to the list length
+//     var n = random.nextInt(i + 1);
+//     var temp = items[i];
+//     items[i] = items[n];
+//     items[n] = temp;
+//   }
+//   return items;
+// }
 
 class Permission {
   bool storage;
@@ -162,9 +185,11 @@ class VolumeControl {
 
 class ScrollBar {
   final bool shown;
-  ScrollBar(this.shown);
-  PlayerState show(PlayerState prevState, bool show) {
+  final bool isAlbum;
+  ScrollBar({this.shown, this.isAlbum = true});
+  PlayerState show(PlayerState prevState, bool show, bool isAlbum) {
     prevState.appbarshown = show;
+    prevState.isAlbum = isAlbum;
     return prevState;
   }
 }
@@ -187,6 +212,65 @@ class ChangeSong {
       prevState.prevbuttonPress = false;
       prevState.nextbuttonPress = false;
     }
+    return prevState;
+  }
+}
+
+class ScreenAction {
+  int selected;
+  bool subScreen;
+  ScreenAction({this.selected, this.subScreen = true});
+  PlayerState screen(PlayerState prevState, int select, bool subScreen) {
+    if (subScreen) {
+      prevState.selected = select;
+    } else {
+      prevState.screen = select;
+    }
+
+    return prevState;
+  }
+}
+
+class PlayListSection {
+  int typeindex;
+  List<String> type;
+  List<List<Song>> playList;
+  List<List<PlayListModel>> playModelList = [];
+
+  PlayListSection({
+    this.type,
+    this.typeindex = -1,
+    this.playList,
+    this.playModelList,
+  });
+
+  PlayerState clicked(PlayerState prevState, int typeindex, List<String> type,
+      List<List<Song>> playList, List<List<PlayListModel>> playModelList) {
+    prevState.type = type;
+    prevState.typeIndex = typeindex;
+    prevState.playList.addAll(playList);
+    prevState.type.insert(0, "Random");
+    prevState.playModelList = playModelList;
+    return prevState;
+  }
+}
+
+class Like {
+  bool like;
+  Like({this.like});
+  PlayerState isFavourite(PlayerState prevState, bool like) {
+    prevState.currentfavourite = like;
+    prevState.changed = false;
+    return prevState;
+  }
+}
+
+class RefreshPlayList {
+  List<Widget> list;
+  RefreshPlayList({this.list});
+
+  PlayerState resfresh(PlayerState prevState, List<Widget> list) {
+    prevState.refreshlist = list;
     return prevState;
   }
 }

@@ -3,8 +3,9 @@ import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:days_of_sweat/redux/actions/main_actions.dart';
 import 'package:days_of_sweat/redux/store/main_store.dart';
-import 'package:days_of_sweat/src/screen/widget/Song/song.dart';
-import 'package:days_of_sweat/src/screen/widget/reuseable.dart';
+import 'package:days_of_sweat/src/screen/Database/Database.dart';
+import 'package:days_of_sweat/src/screen/Database/PlayList.dart';
+
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,15 +13,18 @@ import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_redux_navigation/flutter_redux_navigation.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:media_notification/media_notification.dart';
+
 import 'package:permission_handler/permission_handler.dart';
 import 'package:toast/toast.dart';
 import './widget/title.dart';
 import './widget/Appbar.dart';
-import './widget/Calender.dart';
+
 import './widget/Detail.dart';
-import './widget/music_player.dart';
-import 'package:volume/volume.dart';
+
+import 'Calender/Calender.dart';
+import 'MusicPlayer/Local/SMusic/music_player.dart';
+import 'MusicPlayer/Local/common/song.dart';
+import 'common/ReusableCode.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -37,13 +41,15 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   var dragged = false;
   bool storageAccess = false;
   bool calenderAccess = false;
+  int count = 0;
   AppLifecycleState _notification;
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     setState(() {
       _notification = state;
     });
-    print("APP LIFECYCLE:$state");
+    // print("APP LIFECYCLE:$state");
   }
 
   @override
@@ -62,7 +68,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   void permissionRequired(func) {
     PermissionHandler().requestPermissions(
         [PermissionGroup.storage, PermissionGroup.calendar]).then((p) {
-      print("Permission:" + p.toString());
+      // print("Permission:" + p.toString());
       if (p[0] == PermissionStatus.granted &&
           p[1] == PermissionStatus.granted) {
         setState(() {
@@ -83,7 +89,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
         .checkPermissionStatus(PermissionGroup.calendar);
     if (storage == PermissionStatus.granted &&
         calender == PermissionStatus.granted) {
-      print("CHECK STORAGE YERS");
+      // print("CHECK STORAGE YERS");
       setState(() {
         storageAccess = true;
         calenderAccess = true;
@@ -120,7 +126,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
 
   static const MusicList = const MethodChannel('MusicList');
 
-  static Future<dynamic> allSongs(List<dynamic> songs) async {
+  static Future<dynamic> allSongs(List<dynamic> songs) {
     var completer = new Completer();
     //print(songs.runtimeType);
     var mySongs = songs.map((m) => new Song.fromMap(m)).toList();
@@ -129,19 +135,70 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     return completer.future;
   }
 
+  void testing() async {
+    DBProvider.db.addNewPlaylistIndex(
+        new PlayListModel(id: 0, songID: 249, type: 'Favourite'));
+    DBProvider.db
+        .addNewPlaylistIndex(new PlayListModel(id: 1, songID: 253, type: 'My'));
+    DBProvider.db
+        .addNewPlaylistIndex(new PlayListModel(id: 2, songID: 250, type: 'My'));
+    DBProvider.db.addNewPlaylistIndex(
+        new PlayListModel(id: 3, songID: 252, type: 'Sad'));
+  }
+
+  // void creatingPlaylist(dynamic context, List<Song> songs) async {
+  //   // testing();
+  //   DBProvider.db.printTable();
+  //   List<String> type = await DBProvider.db.getType();
+  //   List<List<PlayListModel>> playModelList = [];
+  //   List<List<Song>> playlistAlbum = [];
+  //   // print("type:$type");
+  //   if (type.length > 0) {
+  //     //more than type
+  //     for (int i = 0; i < type.length; i++) {
+  //       playModelList.add(await DBProvider.db.getPlayList(
+  //           type[i])); //get all playlistmodel of that specific type
+  //       // list in which all song of that specific type will be
+  //       List<Song> playlist = [];
+
+  //       for (int j = 0; j < playModelList[i].length; j++) {
+  //         int id = playModelList[i][j].songID;
+  //         if (contain(id, songs)[0]) {
+  //           playlist.add(contain(id, songs)[1]);
+  //         }
+  //       }
+  //       playlistAlbum.add(playlist);
+  //     }
+  //     // print("PlaylistScreen:${playlistAlbum.toString()}");
+  //   }
+  //   StoreProvider.of<PlayerState>(context).dispatch(PlayListSection(
+  //       type: type, playList: playlistAlbum, playModelList: playModelList));
+  // }
+
+  // dynamic contain(int id, List<Song> song) {
+  //   for (int i = 0; i < song.length; i++) {
+  //     if (id == song[i].id) {
+  //       return [true, song[i]];
+  //     }
+  //   }
+  //   return [false];
+  // }
+
   Future<dynamic> _getMusicList(dynamic context) async {
     List<Song> _songs;
 
-    print("GETMUSICLIST:$storageAccess && $calenderAccess");
+    // print("GETMUSICLIST:$storageAccess && $calenderAccess");
     if (storageAccess) {
       try {
         _songs = await allSongs(await MusicList.invokeMethod('getMusicList'));
+        // print("SONGS:${_songs.toString()}");
         StoreProvider.of<PlayerState>(context).dispatch(
           SongList(_songs, -1),
         );
+        code.creatingPlaylist(context, _songs);
         _getArtistList(context, _songs);
 
-        print("music Length: ${_songs.length}");
+        // print("music Length: ${_songs.length}");
       } on PlatformException catch (e) {
         print("Failed to get music List ${e.message}");
       }
@@ -181,9 +238,9 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
         artistDone.add(artistName);
       }
     }
-    print(artistShowList.toString());
+    // print(artistShowList.toString());
     //print(artistDone.toString());
-    //print(_artistList[0].toString());
+    // print(_artistList[0].toString());
 
     StoreProvider.of<PlayerState>(context).dispatch(
       // Artist(artistShowList, _artistList, 1),
@@ -204,9 +261,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
       // bottomSheet: Container(),
       body: new StoreConnector<PlayerState, PlayerState>(
         converter: (store) => store.state,
-        onInit: (store) {
-          // code.mediaNotification(context, store.state);
-        },
+        onInit: (store) {},
         builder: (context, state) {
           return Material(
             child: Container(
@@ -290,6 +345,9 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                           //color: Colors.green,
                           child: GestureDetector(
                             onVerticalDragStart: (detail) {
+                              StoreProvider.of<PlayerState>(context).dispatch(
+                                  ScrollBar(shown: false, isAlbum: false));
+
                               StoreProvider.of<PlayerState>(context)
                                   .dispatch(NavigateToAction.push('/music'));
                             },

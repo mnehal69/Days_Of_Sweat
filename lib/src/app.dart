@@ -1,28 +1,37 @@
 import 'package:days_of_sweat/redux/route_aware_widget.dart';
 import 'package:days_of_sweat/src/screen/MainScreen.dart';
-import 'package:days_of_sweat/src/screen/PlayerScreen.dart';
-import 'package:days_of_sweat/src/screen/widget/FMusic/main_screen/FMusicMain.dart';
-import 'package:days_of_sweat/src/screen/widget/FMusic/main_screen/artist/artist_playlist/artist_playlist.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
+// import 'package:redux/redux.dart';
 import './../redux/store/main_store.dart';
-import 'package:days_of_sweat/redux/reducers/main_reducer.dart';
+// import 'package:days_of_sweat/redux/reducers/main_reducer.dart';
 import 'package:days_of_sweat/redux/store/main_store.dart';
 import 'package:flutter_redux_navigation/flutter_redux_navigation.dart';
+// import 'package:redux_remote_devtools/redux_remote_devtools.dart';
+import 'package:redux_dev_tools/redux_dev_tools.dart';
+
+import 'screen/MusicPlayer/Local/FMusic/main_screen/FMusicMain.dart';
+import 'screen/MusicPlayer/Local/FMusic/main_screen/artist/artist_playlist/artist_playlist.dart';
+import 'screen/MusicPlayer/Local/player/PlayerScreen.dart';
 
 // final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
 
 class MyApp extends StatelessWidget {
   // final store = Store<PlayerState>(playerStateReducer,
-  final store = Store<PlayerState>(
-      combineReducers<PlayerState>([playerStateReducer]),
-      initialState: PlayerState(),
-      middleware: [
-        NavigationMiddleware(),
-      ]);
+
+  // final store = Store<PlayerState>(
+  //     combineReducers<PlayerState>([playerStateReducer]),
+  //     initialState: PlayerState(),
+  //     middleware: [
+  //       NavigationMiddleware(),
+  //     ]);
+  // final DevToolsStore<PlayerState> store;
+  final Store<PlayerState> store;
 
   MyApp({
+    this.store,
     Key key,
   }) : super(key: key);
 
