@@ -20,19 +20,19 @@ import 'src/screen/MusicPlayer/Local/FMusic/main_screen/artist/artist_playlist/a
 import 'src/screen/MusicPlayer/Local/player/PlayerScreen.dart';
 
 void main() async {
-  var remoteDevtools = RemoteDevToolsMiddleware('192.168.10.3:8000');
+  // var remoteDevtools = RemoteDevToolsMiddleware('192.168.10.3:8000');
 
-  final store = DevToolsStore<MainState>(
-    // final store = Store<MainState>(
+  // final store = DevToolsStore<MainState>(
+  final store = Store<MainState>(
     combineReducers<MainState>([playerStateReducer, calenderStateReducer]),
     initialState: MainState(),
     middleware: [
-      remoteDevtools,
+      // remoteDevtools,
       NavigationMiddleware(),
     ],
   );
-  remoteDevtools.store = store;
-  await remoteDevtools.connect();
+  // remoteDevtools.store = store;
+  // await remoteDevtools.connect();
   runApp(new MyApp(store: store));
 }
 
