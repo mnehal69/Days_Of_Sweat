@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:days_of_sweat/redux/actions/main_actions.dart';
+import 'package:days_of_sweat/redux/actions/player_actions.dart';
 import 'package:days_of_sweat/redux/store/main_store.dart';
 import 'package:days_of_sweat/src/screen/common/ReusableCode.dart';
 import 'package:days_of_sweat/src/screen/common/hex_color.dart';
@@ -28,7 +28,7 @@ class MusicPlayerState extends State<MusicPlayer> {
   //#150f1e
   @override
   Widget build(BuildContext context) {
-    return new StoreConnector<PlayerState, PlayerState>(
+    return new StoreConnector<MainState, MainState>(
       converter: (store) => store.state,
       onWillChange: (state) {
         // print(
@@ -43,14 +43,14 @@ class MusicPlayerState extends State<MusicPlayer> {
           //       statusBarColor: Colors.white),
           // );
           state.advancedPlayer.onAudioPositionChanged.listen((duration) {
-            StoreProvider.of<PlayerState>(context)
+            StoreProvider.of<MainState>(context)
                 .dispatch(AudioPlaying(state.playing, duration.inMilliseconds));
           });
           state.advancedPlayer.onPlayerCompletion.listen((onData) {
-            StoreProvider.of<PlayerState>(context).dispatch(
+            StoreProvider.of<MainState>(context).dispatch(
                 Player(isAlbum: state.isAlbum, index: state.index + 1));
           });
-          StoreProvider.of<PlayerState>(context).dispatch(Dispose(
+          StoreProvider.of<MainState>(context).dispatch(Dispose(
               dispose: state.fullPlayerDispose, counter: state.counter + 1));
         }
       },
@@ -60,10 +60,10 @@ class MusicPlayerState extends State<MusicPlayer> {
         // print("FULLMUSICMAIN:${state.expand} && ${state.dragging}");
         return GestureDetector(
           onVerticalDragStart: (detail) {
-            StoreProvider.of<PlayerState>(context)
+            StoreProvider.of<MainState>(context)
                 .dispatch(ScrollBar(shown: false, isAlbum: false));
-            StoreProvider.of<PlayerState>(context)
-                .dispatch(NavigateToAction.push('/music'));
+            StoreProvider.of<MainState>(context)
+                .dispatch(NavigateToAction.push('/player'));
           },
           child: AnimatedContainer(
             duration: Duration(milliseconds: 500),

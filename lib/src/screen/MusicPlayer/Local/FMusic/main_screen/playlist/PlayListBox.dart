@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:days_of_sweat/redux/actions/main_actions.dart';
+import 'package:days_of_sweat/redux/actions/player_actions.dart';
 import 'package:days_of_sweat/redux/store/main_store.dart';
 import 'package:days_of_sweat/src/screen/Database/Database.dart';
 import 'package:days_of_sweat/src/screen/MusicPlayer/Local/common/song.dart';
@@ -26,7 +26,7 @@ class PlayListBoxState extends State<PlayListBox> {
   bool press = false;
   PlayListBoxState({this.position});
 
-  void randomIndex(PlayerState state) {
+  void randomIndex(MainState state) {
     List<String> uri = [];
     List<Song> album = state.playList[position];
     List<String> albumList = [];
@@ -43,8 +43,8 @@ class PlayListBoxState extends State<PlayListBox> {
     state.playListAlbumArtList.add(uri);
   }
 
-  Widget image(PlayerState state, int index) {
-    if (state.playListAlbumArtList[position][index] == null) {
+  Widget image(MainState state, int index) {
+    if (state.playListAlbumArtList[position][index] == null || position == -1) {
       return Image.asset(
         "resources/no_coverM.png",
         fit: BoxFit.cover,
@@ -61,7 +61,7 @@ class PlayListBoxState extends State<PlayListBox> {
 
   @override
   Widget build(BuildContext context) {
-    return new StoreConnector<PlayerState, PlayerState>(
+    return new StoreConnector<MainState, MainState>(
       converter: (store) => store.state,
       onInit: (store) {
         randomIndex(store.state);
@@ -80,7 +80,7 @@ class PlayListBoxState extends State<PlayListBox> {
                 state: state,
                 list: state.playList[position],
               );
-              StoreProvider.of<PlayerState>(context).dispatch(PlayListSection(
+              StoreProvider.of<MainState>(context).dispatch(PlayListSection(
                   type: state.type,
                   playList: state.playList,
                   typeindex: position));
@@ -228,7 +228,7 @@ class PlayListBoxState extends State<PlayListBox> {
                                         .deletePlaylist(state.type[position]);
                                     state.playList.removeAt(position);
                                     state.type.removeAt(position);
-                                    StoreProvider.of<PlayerState>(context)
+                                    StoreProvider.of<MainState>(context)
                                         .dispatch(RefreshPlayList(
                                       list: List.generate(
                                         state.playList.length,

@@ -1,4 +1,4 @@
-import 'package:days_of_sweat/redux/actions/main_actions.dart';
+import 'package:days_of_sweat/redux/actions/player_actions.dart';
 import 'package:days_of_sweat/redux/store/main_store.dart';
 import 'package:days_of_sweat/src/screen/common/ReusableCode.dart';
 import 'package:days_of_sweat/src/screen/common/hex_color.dart';
@@ -21,15 +21,6 @@ class ArtistPlayListState extends State<ArtistPlayList> {
   @override
   void initState() {
     super.initState();
-    SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(
-        // For iOS
-        statusBarBrightness: Brightness.light,
-        // For Android M and higher
-        statusBarIconBrightness: Brightness.light,
-        statusBarColor: HexColor("#1a1b1f"),
-      ),
-    );
     _controller = ScrollController();
     _controller.addListener(_scrollListener);
   }
@@ -41,9 +32,9 @@ class ArtistPlayListState extends State<ArtistPlayList> {
     // print("ControllerNo80%:${no}");
     // print(_controller.offset);
     if (_controller.offset >= code.percentageToNumber(context, "40%", true)) {
-      StoreProvider.of<PlayerState>(context).dispatch(ScrollBar(shown: true));
+      StoreProvider.of<MainState>(context).dispatch(ScrollBar(shown: true));
     } else {
-      StoreProvider.of<PlayerState>(context).dispatch(ScrollBar(shown: false));
+      StoreProvider.of<MainState>(context).dispatch(ScrollBar(shown: false));
     }
     // if(_controller.offset<=)
   }
@@ -56,19 +47,13 @@ class ArtistPlayListState extends State<ArtistPlayList> {
 
   @override
   Widget build(BuildContext context) {
-    return new StoreConnector<PlayerState, PlayerState>(
+    return new StoreConnector<MainState, MainState>(
       converter: (store) => store.state,
       builder: (context, state) {
         return Scaffold(
           body: Material(
             child: Container(
               color: HexColor("#1A1B1F"),
-              //color: Colors.green,
-              // child: Column(
-              //   children: <Widget>[
-              //PlayListAppBar(),
-              //FlexibleAppBar(),
-              //],
               child: CustomScrollView(
                 controller: _controller,
                 slivers: <Widget>[
@@ -81,9 +66,7 @@ class ArtistPlayListState extends State<ArtistPlayList> {
                     flexibleSpace: LayoutBuilder(
                       builder:
                           (BuildContext context, BoxConstraints constraints) {
-                        // print("CH${constraints.biggest.height}");
-                        // print("CH${constraints.maxHeight}");
-
+                     
                         return AnimatedOpacity(
                           opacity: state.appbarshown ? 0.0 : 1.0,
                           duration: Duration(milliseconds: 500),
@@ -167,7 +150,7 @@ class ArtistPlayListState extends State<ArtistPlayList> {
 }
 
 class MusicCard extends StatelessWidget {
-  final PlayerState state;
+  final MainState state;
   final int position;
   final code = ResusableCode();
 

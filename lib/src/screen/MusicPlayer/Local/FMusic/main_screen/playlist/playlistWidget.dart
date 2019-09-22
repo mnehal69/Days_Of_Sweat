@@ -15,7 +15,7 @@ class PlayListWidgetState extends State<PlayListWidget> {
   final code = ResusableCode();
   @override
   Widget build(BuildContext context) {
-    return new StoreConnector<PlayerState, PlayerState>(
+    return new StoreConnector<MainState, MainState>(
       converter: (store) => store.state,
       rebuildOnChange: false,
       builder: (context, state) {
@@ -23,7 +23,7 @@ class PlayListWidgetState extends State<PlayListWidget> {
           height: code.percentageToNumber(context, "72%", true),
           width: code.percentageToNumber(context, "100%", false),
           // color: Colors.teal,
-          child: GridView.count(
+          child: GridView.count(            
             crossAxisCount: 2,
             children: state.refreshlist,
           ),

@@ -11,11 +11,11 @@ import 'Button.dart';
 
 class PlayListAppBar extends StatelessWidget {
   final code = ResusableCode();
-  bool shown;
+  final bool shown;
   PlayListAppBar({this.shown});
   @override
   Widget build(BuildContext context) {
-    return new StoreConnector<PlayerState, PlayerState>(
+    return new StoreConnector<MainState, MainState>(
       converter: (store) => store.state,
       builder: (context, state) {
         return AnimatedOpacity(
@@ -59,21 +59,8 @@ class PlayListAppBar extends StatelessWidget {
                         ),
                         width: code.percentageToNumber(
                             context, state.isAlbum ? "20%" : "50%", false),
-                        // child: Text(
-                        //   "Eminem",
-                        //   style: TextStyle(
-                        //     color: Colors.white,
-                        //     fontFamily: "Lato",
-                        //     fontWeight: FontWeight.bold,
-                        //     fontSize: code.percentageToNumber(context, "5%", true),
-                        //   ),
-                        // ),
                         child: Container(
                           alignment: Alignment.center,
-                          //color: Colors.red,
-                          // child: SizedBox(
-                          //   width: 200.0,
-                          //   height: 140.0,
                           child: AutoSizeText(
                             state.isAlbum
                                 ? state.artistList[state.currentAlbumIndex][0]
@@ -92,11 +79,7 @@ class PlayListAppBar extends StatelessWidget {
                               code.percentageToNumber(context, "1%", true),
                             ],
                             textAlign: TextAlign.center,
-                            // maxLines: 1,
-                            // minFontSize: code.percentageToNumber(context, "1%", true),
-                            // maxFontSize: code.percentageToNumber(context, "5%", true),
                           ),
-                          //),
                         ),
                       ),
                       Container(

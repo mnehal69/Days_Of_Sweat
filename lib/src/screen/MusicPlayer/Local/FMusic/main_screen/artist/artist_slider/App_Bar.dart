@@ -1,15 +1,15 @@
+import 'package:days_of_sweat/redux/actions/player_actions.dart';
 import 'package:days_of_sweat/redux/store/main_store.dart';
 import 'package:days_of_sweat/src/screen/common/ReusableCode.dart';
 import 'package:days_of_sweat/src/screen/common/hex_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:days_of_sweat/redux/actions/main_actions.dart';
 
 class FAppBar extends StatelessWidget {
   final ResusableCode code = ResusableCode();
   @override
   Widget build(BuildContext context) {
-    return new StoreConnector<PlayerState, PlayerState>(
+    return new StoreConnector<MainState, MainState>(
       converter: (store) => store.state,
       builder: (context, state) {
         return Container(
@@ -20,7 +20,7 @@ class FAppBar extends StatelessWidget {
           child: Row(
             children: [
               GestureDetector(
-                onTap: () => StoreProvider.of<PlayerState>(context)
+                onTap: () => StoreProvider.of<MainState>(context)
                     .dispatch(ScreenAction(selected: 1, subScreen: false)),
                 child: TitleText(
                   title: "Local",
@@ -28,7 +28,7 @@ class FAppBar extends StatelessWidget {
                 ),
               ),
               GestureDetector(
-                onTap: () => StoreProvider.of<PlayerState>(context)
+                onTap: () => StoreProvider.of<MainState>(context)
                     .dispatch(ScreenAction(selected: 2, subScreen: false)),
                 child: TitleText(
                   title: "Online",

@@ -1,16 +1,16 @@
+import 'package:days_of_sweat/redux/actions/player_actions.dart';
 import 'package:days_of_sweat/redux/store/main_store.dart';
 import 'package:days_of_sweat/src/screen/MusicPlayer/Local/FMusic/main_screen/playlist/PlayListBox.dart';
 import 'package:days_of_sweat/src/screen/common/ReusableCode.dart';
 import 'package:days_of_sweat/src/screen/common/hex_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:days_of_sweat/redux/actions/main_actions.dart';
 
 class FTitleBar extends StatelessWidget {
   final code = ResusableCode();
   @override
   Widget build(BuildContext context) {
-    return new StoreConnector<PlayerState, PlayerState>(
+    return new StoreConnector<MainState, MainState>(
       converter: (store) => store.state,
       builder: (context, state) {
         return Container(
@@ -21,7 +21,7 @@ class FTitleBar extends StatelessWidget {
           child: Row(
             children: [
               GestureDetector(
-                onTap: () => StoreProvider.of<PlayerState>(context)
+                onTap: () => StoreProvider.of<MainState>(context)
                     .dispatch(ScreenAction(selected: 1)),
                 child: TitleText(
                   title: "Artist",
@@ -32,8 +32,7 @@ class FTitleBar extends StatelessWidget {
                 onTap: () {
                   print("type:${state.type}");
                   print("playlist:${state.playList.length}");
-                  StoreProvider.of<PlayerState>(context)
-                      .dispatch(RefreshPlayList(
+                  StoreProvider.of<MainState>(context).dispatch(RefreshPlayList(
                     list: List.generate(
                       state.playList.length,
                       (index) {
@@ -44,7 +43,7 @@ class FTitleBar extends StatelessWidget {
                     ),
                   ));
 
-                  StoreProvider.of<PlayerState>(context)
+                  StoreProvider.of<MainState>(context)
                       .dispatch(ScreenAction(selected: 2));
                 },
                 child: TitleText(
@@ -54,9 +53,9 @@ class FTitleBar extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  StoreProvider.of<PlayerState>(context)
+                  StoreProvider.of<MainState>(context)
                       .dispatch(ScreenAction(selected: 3));
-                  StoreProvider.of<PlayerState>(context).dispatch(
+                  StoreProvider.of<MainState>(context).dispatch(
                     ScrollBar(shown: false, isAlbum: false),
                   );
                 },

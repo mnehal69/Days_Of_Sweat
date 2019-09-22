@@ -1,4 +1,4 @@
-import 'package:days_of_sweat/redux/actions/main_actions.dart';
+import 'package:days_of_sweat/redux/actions/player_actions.dart';
 import 'package:days_of_sweat/redux/store/main_store.dart';
 import 'package:days_of_sweat/src/screen/Database/Database.dart';
 import 'package:days_of_sweat/src/screen/Database/PlayList.dart';
@@ -25,7 +25,7 @@ class BottomButtonState extends State<BottomButton> {
   bool changed;
   Song currentSong;
 
-  void favourite(PlayerState state) async {
+  void favourite(MainState state) async {
     int index;
     if (state.type.contains("Favourite")) {
       index = state.type.indexOf("Favourite");
@@ -37,7 +37,7 @@ class BottomButtonState extends State<BottomButton> {
       // DELETE FROM LIST AND DATABASE
       //
       print("1!!!!!!!!");
-      StoreProvider.of<PlayerState>(context).dispatch(Like(like: false));
+      StoreProvider.of<MainState>(context).dispatch(Like(like: false));
       DBProvider.db.deletePlaylistIndex(state.currentId, "Favourite");
 
       // state.type.remove("Favourite");
@@ -73,7 +73,7 @@ class BottomButtonState extends State<BottomButton> {
           songID: state.currentId,
           type: 'Favourite'));
 
-      StoreProvider.of<PlayerState>(context).dispatch(Like(like: true));
+      StoreProvider.of<MainState>(context).dispatch(Like(like: true));
     }
     DBProvider.db.printTable();
     print(" PLAYLIST LENGTH:${state.playList.length}");
@@ -84,16 +84,16 @@ class BottomButtonState extends State<BottomButton> {
 
   @override
   Widget build(BuildContext context) {
-    return new StoreConnector<PlayerState, PlayerState>(
+    return new StoreConnector<MainState, MainState>(
       converter: (store) => store.state,
       onWillChange: (state) async {
         if (state.changed) {
           var favourite = await DBProvider.db
               .existsPlaylistIndex(state.currentId, "Favourite");
           if (favourite) {
-            StoreProvider.of<PlayerState>(context).dispatch(Like(like: true));
+            StoreProvider.of<MainState>(context).dispatch(Like(like: true));
           } else {
-            StoreProvider.of<PlayerState>(context).dispatch(Like(like: false));
+            StoreProvider.of<MainState>(context).dispatch(Like(like: false));
           }
           setState(() {
             currentSong = state.currentPlayingList[state.index];
@@ -193,7 +193,7 @@ class BottomButtonState extends State<BottomButton> {
                   color: !state.volumeBarVisible ? Colors.grey : Colors.white,
                 ),
                 onPressed: () {
-                  StoreProvider.of<PlayerState>(context).dispatch(
+                  StoreProvider.of<MainState>(context).dispatch(
                       VolumeControl(!state.volumeBarVisible, state.volume));
                 },
               )

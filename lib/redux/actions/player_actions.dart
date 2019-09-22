@@ -7,7 +7,7 @@ class AudioPlaying {
   final bool playing;
   final int currentduration;
   AudioPlaying(this.playing, this.currentduration);
-  PlayerState audioPlaying(PlayerState prevState, bool playing, int duration) {
+  MainState audioPlaying(MainState prevState, bool playing, int duration) {
     prevState.playing = playing;
     prevState.currentDuration = duration;
     // prevState.changed = false;
@@ -18,7 +18,7 @@ class AudioPlaying {
 class PlayerController {
   final PageController controller;
   PlayerController({this.controller});
-  PlayerState isLast(PlayerState prevState, PageController controller) {
+  MainState isLast(MainState prevState, PageController controller) {
     prevState.controller = controller;
     return prevState;
   }
@@ -28,7 +28,7 @@ class Dispose {
   final bool dispose;
   final int counter;
   Dispose({this.dispose, this.counter});
-  PlayerState isDispose(PlayerState prevState, bool dispose, int count) {
+  MainState isDispose(MainState prevState, bool dispose, int count) {
     prevState.fullPlayerDispose = dispose;
     prevState.counter = count;
 
@@ -46,7 +46,7 @@ class Player {
   int duration;
   dynamic list;
   Player({this.isAlbum, this.index, this.duration = 0, this.list = 0});
-  PlayerState intialized(PlayerState prevState, bool isAlbum, int indexno,
+  MainState intialized(MainState prevState, bool isAlbum, int indexno,
       int duration, dynamic list) {
     int index = indexno;
     List listvar;
@@ -106,7 +106,7 @@ class ArtistAlbum {
     };
   }
 
-  PlayerState intialized(PlayerState prevState, List<List<Song>> artistSong,
+  MainState intialized(MainState prevState, List<List<Song>> artistSong,
       final List<List<String>> artistList, int albumIndex) {
     prevState.artistSongList = artistSong;
     prevState.artistList = artistList;
@@ -129,7 +129,7 @@ class SongList {
     };
   }
 
-  PlayerState intialized(PlayerState prevState, List<Song> song, int index) {
+  MainState intialized(MainState prevState, List<Song> song, int index) {
     List<Song> shuffled = new List<Song>.from(song);
     prevState.songlist = song;
     prevState.index = index;
@@ -157,7 +157,7 @@ class SongList {
 class Permission {
   bool storage;
   Permission(this.storage);
-  PlayerState isaccesed(PlayerState prevState, bool storage) {
+  MainState isaccesed(MainState prevState, bool storage) {
     prevState.storageAccess = storage;
     return prevState;
   }
@@ -168,7 +168,7 @@ class VolumeControl {
   final int volume;
   VolumeControl(this.volumeBarShow, this.volume);
   // final playBtnSkew;
-  PlayerState volumeControl(PlayerState prevState, bool volumeBar, int volume) {
+  MainState volumeControl(MainState prevState, bool volumeBar, int volume) {
     prevState.volumeBarVisible = volumeBar;
     if (volume > 100) {
       prevState.volume = 100;
@@ -187,7 +187,7 @@ class ScrollBar {
   final bool shown;
   final bool isAlbum;
   ScrollBar({this.shown, this.isAlbum = true});
-  PlayerState show(PlayerState prevState, bool show, bool isAlbum) {
+  MainState show(MainState prevState, bool show, bool isAlbum) {
     prevState.appbarshown = show;
     prevState.isAlbum = isAlbum;
     return prevState;
@@ -197,7 +197,7 @@ class ScrollBar {
 class ChangeSong {
   final int btn; //0==none -1 === prev 1==next
   ChangeSong({this.btn});
-  PlayerState pressed(PlayerState prevState, int btn) {
+  MainState pressed(MainState prevState, int btn) {
     if (btn == 1) {
       prevState.advancedPlayer.release();
       prevState.nextbuttonPress = true;
@@ -220,7 +220,7 @@ class ScreenAction {
   int selected;
   bool subScreen;
   ScreenAction({this.selected, this.subScreen = true});
-  PlayerState screen(PlayerState prevState, int select, bool subScreen) {
+  MainState screen(MainState prevState, int select, bool subScreen) {
     if (subScreen) {
       prevState.selected = select;
     } else {
@@ -244,7 +244,7 @@ class PlayListSection {
     this.playModelList,
   });
 
-  PlayerState clicked(PlayerState prevState, int typeindex, List<String> type,
+  MainState clicked(MainState prevState, int typeindex, List<String> type,
       List<List<Song>> playList, List<List<PlayListModel>> playModelList) {
     prevState.type = type;
     prevState.typeIndex = typeindex;
@@ -258,7 +258,7 @@ class PlayListSection {
 class Like {
   bool like;
   Like({this.like});
-  PlayerState isFavourite(PlayerState prevState, bool like) {
+  MainState isFavourite(MainState prevState, bool like) {
     prevState.currentfavourite = like;
     prevState.changed = false;
     return prevState;
@@ -269,7 +269,7 @@ class RefreshPlayList {
   List<Widget> list;
   RefreshPlayList({this.list});
 
-  PlayerState resfresh(PlayerState prevState, List<Widget> list) {
+  MainState resfresh(MainState prevState, List<Widget> list) {
     prevState.refreshlist = list;
     return prevState;
   }

@@ -15,7 +15,7 @@ class FlexibleAppBar extends StatelessWidget {
   final code = ResusableCode();
   @override
   Widget build(BuildContext context) {
-    return new StoreConnector<PlayerState, PlayerState>(
+    return new StoreConnector<MainState, MainState>(
       converter: (store) => store.state,
       builder: (context, state) {
         return AnimatedOpacity(
@@ -107,7 +107,7 @@ class BottomPictureSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new StoreConnector<PlayerState, PlayerState>(
+    return new StoreConnector<MainState, MainState>(
       converter: (store) => store.state,
       builder: (context, state) {
         return Column(

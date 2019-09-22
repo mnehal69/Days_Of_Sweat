@@ -41,7 +41,7 @@ class SCoverState extends State<SCover> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return new StoreConnector<PlayerState, PlayerState>(
+    return new StoreConnector<MainState, MainState>(
       converter: (store) => store.state,
       onInit: (store) => this.isplaying(store.state.playing),
       onWillChange: (state) => this.isplaying(state.playing),

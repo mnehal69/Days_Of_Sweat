@@ -34,7 +34,6 @@ class FMusicMainState extends State<FMusicMain> {
 
   @override
   void initState() {
-    super.initState();
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
         // For iOS
@@ -44,6 +43,7 @@ class FMusicMainState extends State<FMusicMain> {
         statusBarColor: HexColor("#1a1b1f"),
       ),
     );
+    super.initState();
   }
 
   Widget artist() {
@@ -110,7 +110,7 @@ class FMusicMainState extends State<FMusicMain> {
     );
   }
 
-  screen(PlayerState state) {
+  screen(MainState state) {
     if (state.screen == 1) {
       return local(state.selected);
     } else {
@@ -120,7 +120,7 @@ class FMusicMainState extends State<FMusicMain> {
 
   @override
   Widget build(BuildContext context) {
-    return new StoreConnector<PlayerState, PlayerState>(
+    return new StoreConnector<MainState, MainState>(
       converter: (store) => store.state,
       onInit: (state) {
         _timer = new Timer(const Duration(milliseconds: 1000), () {
@@ -130,21 +130,12 @@ class FMusicMainState extends State<FMusicMain> {
           _timer.cancel();
         });
       },
-      onDispose: (store) {
-        SystemChrome.setSystemUIOverlayStyle(
-          SystemUiOverlayStyle(
-              // For iOS
-              statusBarBrightness: Brightness.dark,
-              // For Android M and higher
-              statusBarIconBrightness: Brightness.dark,
-              statusBarColor: Colors.white),
-        );
-      },
+      onDispose: (store) {},
       builder: (context, state) {
         // return artist();
         return Material(
           child: Container(
-            color: HexColor("#1a1b1f"),
+            color: Theme.of(context).backgroundColor,
             child: screen(state),
           ),
         );

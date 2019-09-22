@@ -1,30 +1,26 @@
 import 'dart:async';
 
 import 'package:audioplayers/audioplayers.dart';
-import 'package:days_of_sweat/redux/actions/main_actions.dart';
+import 'package:days_of_sweat/redux/actions/player_actions.dart';
 import 'package:days_of_sweat/redux/store/main_store.dart';
 import 'package:days_of_sweat/src/screen/Database/Database.dart';
 import 'package:days_of_sweat/src/screen/Database/PlayList.dart';
+import 'package:days_of_sweat/src/screen/widget/CustomAppBar.dart';
 
-import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:flutter_redux_navigation/flutter_redux_navigation.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:permission_handler/permission_handler.dart';
 import 'package:toast/toast.dart';
-import './widget/title.dart';
-import './widget/Appbar.dart';
-
-import './widget/Detail.dart';
+import 'package:device_calendar/device_calendar.dart';
 
 import 'Calender/Calender.dart';
 import 'MusicPlayer/Local/SMusic/music_player.dart';
 import 'MusicPlayer/Local/common/song.dart';
 import 'common/ReusableCode.dart';
+import 'common/hex_color.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -108,20 +104,19 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
 
   void initState() {
     super.initState();
-    //SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
-    //FlutterStatusbarcolor.setStatusBarColor(Colors.white);
-
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
           // For iOS
-          statusBarBrightness: Brightness.dark,
+          statusBarBrightness: Brightness.light,
           // For Android M and higher
-          statusBarIconBrightness: Brightness.dark,
-          statusBarColor: Colors.white),
+          statusBarIconBrightness: Brightness.light,
+          statusBarColor: HexColor("#1a1b1f")),
     );
-    AudioPlayer.logEnabled = true;
+
+    AudioPlayer.logEnabled = false;
     checker();
     WidgetsBinding.instance.addObserver(this);
+    // print("COLOR:${code.getRandomColor()}");
   }
 
   static const MusicList = const MethodChannel('MusicList');
@@ -146,44 +141,6 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
         new PlayListModel(id: 3, songID: 252, type: 'Sad'));
   }
 
-  // void creatingPlaylist(dynamic context, List<Song> songs) async {
-  //   // testing();
-  //   DBProvider.db.printTable();
-  //   List<String> type = await DBProvider.db.getType();
-  //   List<List<PlayListModel>> playModelList = [];
-  //   List<List<Song>> playlistAlbum = [];
-  //   // print("type:$type");
-  //   if (type.length > 0) {
-  //     //more than type
-  //     for (int i = 0; i < type.length; i++) {
-  //       playModelList.add(await DBProvider.db.getPlayList(
-  //           type[i])); //get all playlistmodel of that specific type
-  //       // list in which all song of that specific type will be
-  //       List<Song> playlist = [];
-
-  //       for (int j = 0; j < playModelList[i].length; j++) {
-  //         int id = playModelList[i][j].songID;
-  //         if (contain(id, songs)[0]) {
-  //           playlist.add(contain(id, songs)[1]);
-  //         }
-  //       }
-  //       playlistAlbum.add(playlist);
-  //     }
-  //     // print("PlaylistScreen:${playlistAlbum.toString()}");
-  //   }
-  //   StoreProvider.of<PlayerState>(context).dispatch(PlayListSection(
-  //       type: type, playList: playlistAlbum, playModelList: playModelList));
-  // }
-
-  // dynamic contain(int id, List<Song> song) {
-  //   for (int i = 0; i < song.length; i++) {
-  //     if (id == song[i].id) {
-  //       return [true, song[i]];
-  //     }
-  //   }
-  //   return [false];
-  // }
-
   Future<dynamic> _getMusicList(dynamic context) async {
     List<Song> _songs;
 
@@ -192,7 +149,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
       try {
         _songs = await allSongs(await MusicList.invokeMethod('getMusicList'));
         // print("SONGS:${_songs.toString()}");
-        StoreProvider.of<PlayerState>(context).dispatch(
+        StoreProvider.of<MainState>(context).dispatch(
           SongList(_songs, -1),
         );
         code.creatingPlaylist(context, _songs);
@@ -242,7 +199,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     //print(artistDone.toString());
     // print(_artistList[0].toString());
 
-    StoreProvider.of<PlayerState>(context).dispatch(
+    StoreProvider.of<MainState>(context).dispatch(
       // Artist(artistShowList, _artistList, 1),
       ArtistAlbum(artistShowList, _artistList, 0),
     );
@@ -257,142 +214,47 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-//      key: _scaffoldKey,
-      // bottomSheet: Container(),
-      body: new StoreConnector<PlayerState, PlayerState>(
+      body: new StoreConnector<MainState, MainState>(
         converter: (store) => store.state,
-        onInit: (store) {},
+        onInit: (store) {
+          print("${this.currentDate.toString()}");
+        },
         builder: (context, state) {
           return Material(
             child: Container(
-              color: darkMode ? Colors.black : Colors.white,
-              // child: Container(
+              width: code.percentageToNumber(context, "100%", true),
+              height: code.percentageToNumber(context, "100%", true),
+              color: HexColor("#1a1b1f"),
               margin: EdgeInsets.only(
-                top: code.percentageToNumber(context, "5%", true),
+                top: code.percentageToNumber(context, "3%", true),
               ),
-              child: Stack(
-                children: [
-                  Container(
-                    alignment: Alignment.topCenter,
-                    child: Column(
-                      children: <Widget>[
-                        TitleBar(
-                          days: 0,
-                          darkMode: darkMode,
-                        ),
-                        CustomAppBar(
-                          year: currentDate.year,
-                          month: currentDate.month,
-                          darkMode: darkMode,
-                        ),
-                        Calender(
-                          selectedDay: currentDate.day,
-                          selectedMonth: currentDate.month,
-                          selectedYear: currentDate.year,
-                          darkMode: darkMode,
-                          show: false,
-                        ),
-                        Detail(),
-                      ],
+              // child: Stack(
+              //   children: [
+              child: Container(
+                // color: Colors.red,
+                alignment: Alignment.topCenter,
+                child: Column(
+                  children: <Widget>[
+                    // TitleBar(
+                    //   days: 0,
+                    //   darkMode: darkMode,
+                    // ),
+                    CustomAppBar2(
+                      year: state.year.indexOf(currentDate.year),
+                      month: currentDate.month - 1,
+                      day: currentDate.day,
                     ),
-                  ),
-                  //VOLUME  CONTROLLER
-                  Positioned(
-                    top: code.percentageToNumber(context, "30%", true),
-                    left: code.percentageToNumber(context, "30%", false),
-                    right: code.percentageToNumber(context, "30%", false),
-                    bottom: code.percentageToNumber(context, "30%", true),
-                    child: AnimatedOpacity(
-                      opacity: state.volumeBarVisible ? 1.0 : 0.0,
-                      duration: Duration(milliseconds: 500),
-                      child: Container(
-                        width: code.percentageToNumber(context, "100%", false),
-                        height: code.percentageToNumber(context, "100%", true),
-                        alignment: Alignment.center,
-                        child: Center(
-                            child: Column(
-                          children: <Widget>[
-                            Icon(
-                              state.volume == 0
-                                  ? FontAwesomeIcons.volumeOff
-                                  : state.volume < 61 && state.volume > 0
-                                      ? FontAwesomeIcons.volumeDown
-                                      : FontAwesomeIcons.volumeUp,
-                              size:
-                                  code.percentageToNumber(context, "10%", true),
-                            ),
-                            Text(
-                              volumeText(state.volume),
-                              style: TextStyle(
-                                  color: Colors.green,
-                                  fontFamily: "Roboto-Bold",
-                                  fontSize: code.percentageToNumber(
-                                      context, "5%", true)),
-                            ),
-                          ],
-                        )),
+                    Calender(),
+                    Container(
+                      height: code.percentageToNumber(context, "27%", true),
+                      margin: EdgeInsets.only(
+                        left: code.percentageToNumber(context, "2%", false),
                       ),
+                      child: state.index != -1 ? MusicPlayer() : Container(),
                     ),
-                  ),
-                  /** Bottom Music Player */
-                  state.index != -1
-                      ? Container(
-                          alignment: Alignment.bottomRight,
-                          child: MusicPlayer(),
-                        )
-                      : Container(
-                          alignment: Alignment.bottomCenter,
-                          //color: Colors.green,
-                          child: GestureDetector(
-                            onVerticalDragStart: (detail) {
-                              StoreProvider.of<PlayerState>(context).dispatch(
-                                  ScrollBar(shown: false, isAlbum: false));
-
-                              StoreProvider.of<PlayerState>(context)
-                                  .dispatch(NavigateToAction.push('/music'));
-                            },
-                            child: Container(
-                              width: code.percentageToNumber(
-                                  context, "100%", false),
-                              height:
-                                  code.percentageToNumber(context, "15%", true),
-                              //color: Colors.red,
-                              // alignment: Alignment.center,
-                              margin: EdgeInsets.only(
-                                bottom: code.percentageToNumber(
-                                    context, "2%", true),
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Container(
-                                    width: code.percentageToNumber(
-                                        context, "50%", false),
-                                    height: code.percentageToNumber(
-                                        context, "10%", true),
-                                    //color: Colors.yellow,
-                                    child: FlareActor(
-                                      'resources/dropdown3.flr',
-                                      alignment: Alignment.center,
-                                      animation: "loop",
-                                      fit: BoxFit.fitWidth,
-                                    ),
-                                  ),
-                                  Text(
-                                    "Swipe up for music",
-                                    style: TextStyle(
-                                      fontFamily: "Lato",
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: code.percentageToNumber(
-                                          context, "2.5%", true),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                ],
+                    // Detail(),
+                  ],
+                ),
               ),
             ),
           );

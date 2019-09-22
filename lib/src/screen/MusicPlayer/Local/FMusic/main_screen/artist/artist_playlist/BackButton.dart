@@ -1,4 +1,4 @@
-import 'package:days_of_sweat/redux/actions/main_actions.dart';
+import 'package:days_of_sweat/redux/actions/player_actions.dart';
 import 'package:days_of_sweat/redux/store/main_store.dart';
 import 'package:days_of_sweat/src/screen/MusicPlayer/Local/FMusic/main_screen/playlist/PlayListBox.dart';
 import 'package:days_of_sweat/src/screen/common/ReusableCode.dart';
@@ -13,13 +13,13 @@ class MusicBackButton extends StatelessWidget {
   MusicBackButton({this.circle = false});
   @override
   Widget build(BuildContext context) {
-    return new StoreConnector<PlayerState, PlayerState>(
+    return new StoreConnector<MainState, MainState>(
       converter: (store) => store.state,
       builder: (context, state) {
         return GestureDetector(
           onTap: () {
             if (state.index > -1) {
-              StoreProvider.of<PlayerState>(context).dispatch(
+              StoreProvider.of<MainState>(context).dispatch(
                 RefreshPlayList(
                   list: List.generate(
                     state.playList.length,
@@ -32,12 +32,12 @@ class MusicBackButton extends StatelessWidget {
                 ),
               );
 
-              StoreProvider.of<PlayerState>(context)
+              StoreProvider.of<MainState>(context)
                   .dispatch(Dispose(dispose: true));
             }
-            StoreProvider.of<PlayerState>(context)
+            StoreProvider.of<MainState>(context)
                 .dispatch(NavigateToAction.pop());
-            // StoreProvider.of<PlayerState>(context).dispatch(action)
+            // StoreProvider.of<MainState>(context).dispatch(action)
           },
           child: Container(
             margin: EdgeInsets.only(

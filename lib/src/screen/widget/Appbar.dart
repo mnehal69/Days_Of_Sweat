@@ -1,5 +1,10 @@
+import 'package:days_of_sweat/redux/actions/player_actions.dart';
+import 'package:days_of_sweat/redux/store/main_store.dart';
+import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:flutter_redux_navigation/flutter_redux_navigation.dart';
 
 class CustomAppBar extends StatelessWidget {
   final year;
@@ -19,8 +24,6 @@ class CustomAppBar extends StatelessWidget {
   ];
   final month;
   final darkMode;
-  
-
 
   CustomAppBar({this.year, this.month, this.darkMode});
   darkmode() {
@@ -43,7 +46,7 @@ class CustomAppBar extends StatelessWidget {
               child: Row(
                 children: <Widget>[
                   Container(
-                    margin: EdgeInsets.only(right: 10.0, top: 10.0),
+                    margin: EdgeInsets.only(right: 10.0, top: 0.0),
                     child: Image.asset(
                       "resources/hamburger.png",
                       scale: 0.7,
@@ -87,9 +90,19 @@ class CustomAppBar extends StatelessWidget {
                   ),
                   Container(
                     margin: EdgeInsets.only(right: 20.0),
-                    child: Image.asset(
-                      darkmode()[1],
-                      scale: 1,
+                    // child: Image.asset(
+                    //   darkmode()[1],
+                    //   scale: 1,
+                    // ),
+                    child: GestureDetector(
+                      onTap: () {
+                        StoreProvider.of<MainState>(context)
+                            .dispatch(ScrollBar(shown: false, isAlbum: false));
+
+                        StoreProvider.of<MainState>(context)
+                            .dispatch(NavigateToAction.push('/music'));
+                      },
+                      child: Icon(EvaIcons.music),
                     ),
                   ),
                 ],

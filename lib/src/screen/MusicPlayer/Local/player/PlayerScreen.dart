@@ -1,3 +1,4 @@
+import 'package:days_of_sweat/redux/actions/player_actions.dart';
 import 'package:days_of_sweat/redux/store/main_store.dart';
 import 'package:days_of_sweat/src/screen/MusicPlayer/Local/FMusic/main_screen/playlist/PlayListBox.dart';
 import 'package:days_of_sweat/src/screen/common/ReusableCode.dart';
@@ -7,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_xlider/flutter_xlider.dart';
-import 'package:days_of_sweat/redux/actions/main_actions.dart';
 import 'package:volume/volume.dart';
 import 'dart:async';
 
@@ -47,7 +47,7 @@ class PlayerScreenState extends State<PlayerScreen> {
     // pass any stream as parameter as per requirement
     await Volume.controlVolume(AudioManager.STREAM_MUSIC);
     int currentVol = await Volume.getVol;
-    StoreProvider.of<PlayerState>(context)
+    StoreProvider.of<MainState>(context)
         .dispatch(VolumeControl(false, currentVol));
   }
 
@@ -74,7 +74,7 @@ class PlayerScreenState extends State<PlayerScreen> {
     );
   }
 
-  Widget volumeBar(context, PlayerState state) {
+  Widget volumeBar(context, MainState state) {
     return FlutterSlider(
       values: [
         (state.volume / 1.0),
@@ -89,7 +89,7 @@ class PlayerScreenState extends State<PlayerScreen> {
         });
         timer = new Timer(timeforTimer, () {
           if (!dragging) {
-            StoreProvider.of<PlayerState>(context)
+            StoreProvider.of<MainState>(context)
                 .dispatch(VolumeControl(false, state.volume));
           }
         });
@@ -122,7 +122,7 @@ class PlayerScreenState extends State<PlayerScreen> {
           dragging = true;
         });
         // print("VOlume:$lowerValue");
-        StoreProvider.of<PlayerState>(context)
+        StoreProvider.of<MainState>(context)
             .dispatch(VolumeControl(true, lowerValue.round()));
       },
     );
@@ -130,17 +130,17 @@ class PlayerScreenState extends State<PlayerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return new StoreConnector<PlayerState, PlayerState>(
+    return new StoreConnector<MainState, MainState>(
       converter: (store) => store.state,
       onInit: (store) {
-        StoreProvider.of<PlayerState>(context)
+        StoreProvider.of<MainState>(context)
             .dispatch(Dispose(dispose: false, counter: 1));
       },
       onDidChange: (state) {
         if (state.volumeBarVisible) {
           timer = new Timer(timeforTimer, () {
             if (!dragging) {
-              StoreProvider.of<PlayerState>(context)
+              StoreProvider.of<MainState>(context)
                   .dispatch(VolumeControl(false, state.volume));
             }
           });
@@ -150,7 +150,7 @@ class PlayerScreenState extends State<PlayerScreen> {
       builder: (context, state) {
         return WillPopScope(
           onWillPop: () {
-            StoreProvider.of<PlayerState>(context).dispatch(RefreshPlayList(
+            StoreProvider.of<MainState>(context).dispatch(RefreshPlayList(
               list: List.generate(
                 state.playList.length,
                 (index) {
@@ -160,7 +160,7 @@ class PlayerScreenState extends State<PlayerScreen> {
                 },
               ),
             ));
-            StoreProvider.of<PlayerState>(context)
+            StoreProvider.of<MainState>(context)
                 .dispatch(Dispose(dispose: true, counter: 0));
             return new Future(() => true);
           },
@@ -170,7 +170,7 @@ class PlayerScreenState extends State<PlayerScreen> {
                 padding: EdgeInsets.only(
                   top: code.percentageToNumber(context, "3%", true),
                 ),
-                color: HexColor("#1A1B1F"),
+                color: HexColor("#1a1b1f"),
                 child: Stack(
                   children: [
                     Column(

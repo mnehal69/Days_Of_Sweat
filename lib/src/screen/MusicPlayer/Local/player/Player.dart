@@ -1,4 +1,4 @@
-import 'package:days_of_sweat/redux/actions/main_actions.dart';
+import 'package:days_of_sweat/redux/actions/player_actions.dart';
 import 'package:days_of_sweat/redux/store/main_store.dart';
 import 'package:days_of_sweat/src/screen/common/ReusableCode.dart';
 import 'package:days_of_sweat/src/screen/common/hex_color.dart';
@@ -25,7 +25,7 @@ class PlayerWidgetState extends State<PlayerWidget> {
     super.dispose();
   }
 
-  Widget playBtnWidget(PlayerState state) {
+  Widget playBtnWidget(MainState state) {
     return Container(
       // color: Colors.grey,
       alignment: Alignment.center,
@@ -79,7 +79,7 @@ class PlayerWidgetState extends State<PlayerWidget> {
     );
   }
 
-  Widget slider(PlayerState state) {
+  Widget slider(MainState state) {
     return Container(
       child: Column(
         children: <Widget>[
@@ -142,9 +142,9 @@ class PlayerWidgetState extends State<PlayerWidget> {
                 ),
                 onDragging: (handlerIndex, lowerValue, upperValue) {
                   double current = (lowerValue * state.totalDuration) / 100;
-                  // StoreProvider.of<PlayerState>(context).dispatch(Audioplayer(
+                  // StoreProvider.of<MainState>(context).dispatch(Audioplayer(
                   //     state.local, current.floor(), state.totalDuration));
-                  StoreProvider.of<PlayerState>(context).dispatch(
+                  StoreProvider.of<MainState>(context).dispatch(
                     AudioPlaying(state.playing, current.floor()),
                   );
                   state.advancedPlayer
@@ -191,7 +191,7 @@ class PlayerWidgetState extends State<PlayerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return new StoreConnector<PlayerState, PlayerState>(
+    return new StoreConnector<MainState, MainState>(
       converter: (store) => store.state,
       builder: (context, state) {
         return Container(

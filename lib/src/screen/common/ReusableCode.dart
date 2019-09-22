@@ -1,17 +1,21 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:days_of_sweat/redux/actions/calender_action.dart';
+import 'package:days_of_sweat/redux/actions/player_actions.dart';
 import 'package:days_of_sweat/redux/store/main_store.dart';
+import 'package:days_of_sweat/src/screen/Calender/CalenderCell.dart';
+import 'package:days_of_sweat/src/screen/Calender/DayModel.dart';
 import 'package:days_of_sweat/src/screen/Database/Database.dart';
 import 'package:days_of_sweat/src/screen/Database/PlayList.dart';
 import 'package:days_of_sweat/src/screen/MusicPlayer/Local/common/song.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_redux_navigation/flutter_redux_navigation.dart';
+import 'package:intl/intl.dart';
 import 'package:media_notification/media_notification.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'hex_color.dart';
-import './../../../redux/actions/main_actions.dart';
 
 class ResusableCode {
   //check if the parameter color is hex code or Colors properties and return it.
@@ -22,6 +26,21 @@ class ResusableCode {
   //|-------------------------------------------|
   bool permission = false;
   Timer timer;
+  var dayList = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  var monthList = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
 
   dynamic colorcheck(color) {
     if (color is Color) {
@@ -44,28 +63,28 @@ class ResusableCode {
     return "$minutes:$second";
   }
 
-  void mediaNotification(context, PlayerState state) {
+  void mediaNotification(context, MainState state) {
     MediaNotification.setListener('play', () {
       state.advancedPlayer.resume();
-      StoreProvider.of<PlayerState>(context).dispatch(
+      StoreProvider.of<MainState>(context).dispatch(
         AudioPlaying(true, state.currentDuration),
       );
     });
     MediaNotification.setListener('pause', () {
       state.advancedPlayer.pause();
-      StoreProvider.of<PlayerState>(context).dispatch(
+      StoreProvider.of<MainState>(context).dispatch(
         AudioPlaying(false, state.currentDuration),
       );
     });
     MediaNotification.setListener('prev', () {
-      StoreProvider.of<PlayerState>(context).dispatch(
+      StoreProvider.of<MainState>(context).dispatch(
         Player(isAlbum: state.isAlbum, index: state.index - 1),
       );
       state.controller.animateToPage(state.index - 1,
           curve: Curves.ease, duration: Duration(milliseconds: 500));
     });
     MediaNotification.setListener('next', () {
-      StoreProvider.of<PlayerState>(context).dispatch(
+      StoreProvider.of<MainState>(context).dispatch(
         Player(isAlbum: state.isAlbum, index: state.index + 1),
       );
       state.controller.animateToPage(state.index + 1,
@@ -75,66 +94,63 @@ class ResusableCode {
     MediaNotification.setListener('closing', () {
       MediaNotification.hide();
       state.advancedPlayer.stop();
-      StoreProvider.of<PlayerState>(context)
+      StoreProvider.of<MainState>(context)
           .dispatch(AudioPlaying(false, state.currentDuration));
       //print("COOL BITCH");
     });
   }
 
   void playingFromintial(
-      {context, PlayerState state, bool isAlbum, dynamic list = 0}) async {
-    StoreProvider.of<PlayerState>(context)
+      {context, MainState state, bool isAlbum, dynamic list = 0}) async {
+    StoreProvider.of<MainState>(context)
         .dispatch(Player(index: 0, isAlbum: isAlbum, list: list));
     state.advancedPlayer.onAudioPositionChanged.listen((duration) {
-      StoreProvider.of<PlayerState>(context)
+      StoreProvider.of<MainState>(context)
           .dispatch(AudioPlaying(state.playing, duration.inMilliseconds));
     });
     state.advancedPlayer.onPlayerCompletion.listen((onData) {
-      StoreProvider.of<PlayerState>(context).dispatch(
+      StoreProvider.of<MainState>(context).dispatch(
           Player(isAlbum: state.isAlbum, index: state.index, list: list));
     });
 
-    StoreProvider.of<PlayerState>(context)
-        .dispatch(NavigateToAction('/player'));
+    StoreProvider.of<MainState>(context).dispatch(NavigateToAction('/player'));
   }
 
-  void random({context, PlayerState state, bool isAlbum}) {
+  void random({context, MainState state, bool isAlbum}) {
     var randomNo = new Random().nextInt(state.length);
     // print("Random No:$randomNo");
-    StoreProvider.of<PlayerState>(context)
+    StoreProvider.of<MainState>(context)
         .dispatch(Player(index: randomNo, isAlbum: isAlbum));
     // this.showNotification(state);
     state.advancedPlayer.onAudioPositionChanged.listen((duration) {
-      StoreProvider.of<PlayerState>(context)
+      StoreProvider.of<MainState>(context)
           .dispatch(AudioPlaying(state.playing, duration.inMilliseconds));
     });
     state.advancedPlayer.onPlayerCompletion.listen((onData) {
       var randomNo = new Random().nextInt(state.length);
-      StoreProvider.of<PlayerState>(context).dispatch(Player(
+      StoreProvider.of<MainState>(context).dispatch(Player(
         isAlbum: state.isAlbum,
         index: randomNo,
       ));
     });
-    StoreProvider.of<PlayerState>(context)
-        .dispatch(NavigateToAction('/player'));
+    StoreProvider.of<MainState>(context).dispatch(NavigateToAction('/player'));
   }
 
   void playingFromPosition(
-      context, PlayerState state, int position, bool isAlbum) {
-    StoreProvider.of<PlayerState>(context)
+      context, MainState state, int position, bool isAlbum) {
+    StoreProvider.of<MainState>(context)
         .dispatch(Player(index: position, isAlbum: isAlbum));
 
     state.advancedPlayer.onAudioPositionChanged.listen((duration) {
-      StoreProvider.of<PlayerState>(context)
+      StoreProvider.of<MainState>(context)
           .dispatch(AudioPlaying(state.playing, duration.inMilliseconds));
     });
     state.advancedPlayer.onPlayerCompletion.listen((onData) {
-      StoreProvider.of<PlayerState>(context)
+      StoreProvider.of<MainState>(context)
           .dispatch(Player(isAlbum: state.isAlbum, index: state.index));
     });
 
-    StoreProvider.of<PlayerState>(context)
-        .dispatch(NavigateToAction('/player'));
+    StoreProvider.of<MainState>(context).dispatch(NavigateToAction('/player'));
   }
 
   void storage_checker(dynamic context) async {
@@ -151,14 +167,14 @@ class ResusableCode {
         });
       }
       if (onValue == PermissionStatus.granted) {
-        //StoreProvider.of<PlayerState>(context).dispatch(Permission(true));
+        //StoreProvider.of<MainState>(context).dispatch(Permission(true));
         permission = true;
       }
     });
   }
 
-  void playbutton(context, PlayerState state) async {
-    StoreProvider.of<PlayerState>(context).dispatch(
+  void playbutton(context, MainState state) async {
+    StoreProvider.of<MainState>(context).dispatch(
       AudioPlaying(!state.playing, state.currentDuration),
     );
 
@@ -173,21 +189,21 @@ class ResusableCode {
     }
   }
 
-  void prevNextBtn(context, PlayerState state, int btn) {
+  void prevNextBtn(context, MainState state, int btn) {
     if (btn == -1) {
-      StoreProvider.of<PlayerState>(context)
+      StoreProvider.of<MainState>(context)
           .dispatch(Player(index: state.index - 1, isAlbum: state.isAlbum));
     } else {
-      StoreProvider.of<PlayerState>(context)
+      StoreProvider.of<MainState>(context)
           .dispatch(Player(index: state.index + 1, isAlbum: state.isAlbum));
     }
 
     state.advancedPlayer.onAudioPositionChanged.listen((duration) {
-      StoreProvider.of<PlayerState>(context)
+      StoreProvider.of<MainState>(context)
           .dispatch(AudioPlaying(state.playing, duration.inMilliseconds));
     });
     state.advancedPlayer.onPlayerCompletion.listen((onData) {
-      StoreProvider.of<PlayerState>(context)
+      StoreProvider.of<MainState>(context)
           .dispatch(Player(isAlbum: state.isAlbum, index: state.index + 1));
     });
   }
@@ -217,7 +233,7 @@ class ResusableCode {
       }
       // print("PlaylistScreen:${playlistAlbum.toString()}");
     }
-    StoreProvider.of<PlayerState>(context).dispatch(PlayListSection(
+    StoreProvider.of<MainState>(context).dispatch(PlayListSection(
         type: type, playList: playlistAlbum, playModelList: playModelList));
   }
 
@@ -228,6 +244,103 @@ class ResusableCode {
       }
     }
     return [false];
+  }
+
+  Iterable<int> get positiveIntegers sync* {
+    int i = 2000;
+    while (true) yield i++;
+  }
+
+  void intializedCalender(
+      {BuildContext context,
+      MainState state,
+      int year,
+      int month,
+      int selectedDay}) {
+    state.calenderlist.removeRange(0, state.calenderlist.length);
+    // print("YEAR:${state.year[year]} MONTH:$month DAY:$selectedDay");
+    //fIRST DAY INDEX
+    var firstdate = new DateTime(state.year[year], month + 1, 1);
+    // print("FIRST:$firstdate");
+
+    // print("CHECK:${DateFormat("E").format(firstdate)}");
+    var firstDayIndex = dayList.indexOf(DateFormat("E").format(firstdate));
+    // print("FirstDayIndex:$firstDayIndex");
+    // print(" FIRSTDAY:${firstdate.day}");
+    //Last day as it can be 28,30,31
+    int lastDayOfMonth = DateTime(state.year[year], month + 2, 0).day;
+    // print(" LASTDAY:$lastDayOfMonth");
+    int daycounter = 1;
+    int counter = 0;
+    for (int row = 0; row < 7; row++) {
+      for (int column = 0; column < 7; column++) {
+        if (row == 0 && column < firstDayIndex ||
+            row == 5 && daycounter > lastDayOfMonth && column != 0) {
+          // print("day:$daycounter");
+          state.calenderlist.add(
+            DayModel(
+              columnIndex: column,
+              rowIndex: row,
+            ),
+          );
+        } else if (row == 5 && daycounter > lastDayOfMonth && column == 0) {
+          break;
+        } else if (row == 6) {
+          state.calenderlist.add(
+            DayModel(
+              day: dayList[column].substring(0, 1),
+              heading: true,
+              columnIndex: column,
+              rowIndex: row,
+            ),
+          );
+        } else {
+          if (selectedDay == daycounter &&
+              state.year[state.yearIndex] == year &&
+              state.year[state.monthIndex] == month) {
+            StoreProvider.of<MainState>(context)
+                .dispatch(SelectedIndex(index: counter));
+          }
+          // print("day Counter:$daycounter");
+          if (daycounter > lastDayOfMonth) {
+            state.calenderlist.add(
+              DayModel(
+                columnIndex: column,
+                rowIndex: row,
+              ),
+            );
+          } else {
+            state.calenderlist.add(
+              DayModel(
+                columnIndex: column,
+                rowIndex: row,
+                empty: false,
+                day: daycounter.toString(),
+                finish: state.finish.contains(daycounter) ? true : false,
+                selected: selectedDay == daycounter ? true : false,
+                show: state.finish.contains(daycounter) ? true : false,
+              ),
+            );
+          }
+          daycounter++;
+        }
+        counter++;
+      }
+    }
+    //
+    StoreProvider.of<MainState>(context).dispatch(
+      CalenderList(
+        generatedList: List.generate(
+          state.calenderlist.length,
+          (index) => CalenderCell(
+            index: index,
+            row: state.calenderlist[index].rowIndex,
+            column: state.calenderlist[index].columnIndex,
+          ),
+        ),
+      ),
+    );
+    //
   }
 
   double percentageToNumber(BuildContext context, String val, bool height) {
@@ -249,5 +362,16 @@ class ResusableCode {
     } else {
       return ((no / 100) * MediaQuery.of(context).size.width);
     }
+  }
+
+  getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    var random;
+    for (var i = 0; i < 6; i++) {
+      random = Random().nextInt(16);
+      color += letters[random];
+    }
+    return color;
   }
 }

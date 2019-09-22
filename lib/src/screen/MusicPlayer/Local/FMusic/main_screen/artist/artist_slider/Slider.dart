@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:days_of_sweat/redux/actions/main_actions.dart';
+import 'package:days_of_sweat/redux/actions/player_actions.dart';
 import 'package:days_of_sweat/redux/store/main_store.dart';
 import 'package:days_of_sweat/src/screen/common/ReusableCode.dart';
 import 'package:days_of_sweat/src/screen/common/hex_color.dart';
@@ -38,7 +38,7 @@ class FSliderState extends State<FSlider> {
 
   @override
   Widget build(BuildContext context) {
-    return new StoreConnector<PlayerState, PlayerState>(
+    return new StoreConnector<MainState, MainState>(
       converter: (store) => store.state,
       builder: (context, state) {
         //print("Cool" + millitoDuration(4345322.toString()));
@@ -116,7 +116,7 @@ class ImageSliderState extends State<ImageSlider> {
 
   @override
   Widget build(BuildContext context) {
-    return new StoreConnector<PlayerState, PlayerState>(
+    return new StoreConnector<MainState, MainState>(
         converter: (store) => store.state,
         builder: (context, state) {
           return Container(
@@ -133,7 +133,7 @@ class ImageSliderState extends State<ImageSlider> {
                 return imageSlider(index, context, state);
               },
               onPageChanged: (index) {
-                StoreProvider.of<PlayerState>(context).dispatch(
+                StoreProvider.of<MainState>(context).dispatch(
                   ArtistAlbum(state.artistList, state.artistSongList, index),
                 );
               },
@@ -143,11 +143,11 @@ class ImageSliderState extends State<ImageSlider> {
   }
 
   navigate(context) {
-    StoreProvider.of<PlayerState>(context)
+    StoreProvider.of<MainState>(context)
         .dispatch(NavigateToAction.push('/playlist'));
   }
 
-  imageSlider(int index, context, PlayerState state) {
+  imageSlider(int index, context, MainState state) {
     return AnimatedBuilder(
         animation: controller,
         builder: (context, widget) {

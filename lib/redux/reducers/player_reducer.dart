@@ -1,7 +1,7 @@
-import './../actions/main_actions.dart';
+import './../actions/player_actions.dart';
 import './../store/main_store.dart';
 
-PlayerState playerStateReducer(PlayerState prevState, dynamic action) {
+MainState playerStateReducer(MainState prevState, dynamic action) {
   if (action is Player) {
     return action.intialized(
         prevState, action.isAlbum, action.index, action.duration, action.list);

@@ -1,4 +1,4 @@
-import 'package:days_of_sweat/redux/actions/main_actions.dart';
+import 'package:days_of_sweat/redux/actions/player_actions.dart';
 import 'package:days_of_sweat/redux/store/main_store.dart';
 import 'package:days_of_sweat/src/screen/MusicPlayer/Local/FMusic/main_screen/artist/artist_playlist/PlayListAppBar.dart';
 import 'package:days_of_sweat/src/screen/MusicPlayer/Local/FMusic/main_screen/artist/artist_slider/App_Bar.dart';
@@ -44,10 +44,10 @@ class MusicListState extends State<MusicList> {
     // print("ControllerNo80%:${no}");
     // print(_controller.offset);
     if (_controller.offset >= code.percentageToNumber(context, "15%", true)) {
-      StoreProvider.of<PlayerState>(context)
+      StoreProvider.of<MainState>(context)
           .dispatch(ScrollBar(shown: true, isAlbum: false));
     } else {
-      StoreProvider.of<PlayerState>(context)
+      StoreProvider.of<MainState>(context)
           .dispatch(ScrollBar(shown: false, isAlbum: false));
     }
     // if(_controller.offset<=)
@@ -61,7 +61,7 @@ class MusicListState extends State<MusicList> {
 
   @override
   Widget build(BuildContext context) {
-    return new StoreConnector<PlayerState, PlayerState>(
+    return new StoreConnector<MainState, MainState>(
       converter: (store) => store.state,
       builder: (context, state) {
         return Scaffold(
@@ -196,7 +196,7 @@ class MusicListState extends State<MusicList> {
 }
 
 class MusicCard extends StatelessWidget {
-  final PlayerState state;
+  final MainState state;
   final int position;
   final code = ResusableCode();
 

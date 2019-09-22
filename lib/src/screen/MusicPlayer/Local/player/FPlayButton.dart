@@ -24,8 +24,8 @@ class FPlayButtonState extends State<FPlayButton> {
     super.dispose();
   }
 
-  // void playbutton(PlayerState state) async {
-  //   StoreProvider.of<PlayerState>(context).dispatch(
+  // void playbutton(MainState state) async {
+  //   StoreProvider.of<MainState>(context).dispatch(
   //     AudioPlaying(!state.playing, state.currentDuration),
   //   );
 
@@ -39,7 +39,7 @@ class FPlayButtonState extends State<FPlayButton> {
   //   }
   // }
 
-  Widget play(context, PlayerState state) {
+  Widget play(context, MainState state) {
     return GestureDetector(
       onTap: () {
         code.playbutton(context, state);
@@ -61,7 +61,7 @@ class FPlayButtonState extends State<FPlayButton> {
     );
   }
 
-  Widget pause(context, PlayerState state) {
+  Widget pause(context, MainState state) {
     return GestureDetector(
       onTap: () {
         code.playbutton(context, state);
@@ -89,7 +89,7 @@ class FPlayButtonState extends State<FPlayButton> {
 
   @override
   Widget build(BuildContext context) {
-    return new StoreConnector<PlayerState, PlayerState>(
+    return new StoreConnector<MainState, MainState>(
         converter: (store) => store.state,
         builder: (context, state) {
           return state.playing ? pause(context, state) : play(context, state);

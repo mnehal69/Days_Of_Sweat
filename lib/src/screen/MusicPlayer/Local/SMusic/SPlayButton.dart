@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:days_of_sweat/redux/actions/main_actions.dart';
+import 'package:days_of_sweat/redux/actions/player_actions.dart';
 import 'package:days_of_sweat/redux/store/main_store.dart';
 import 'package:days_of_sweat/src/screen/common/ReusableCode.dart';
 import 'package:days_of_sweat/src/screen/common/hex_color.dart';
@@ -42,22 +42,6 @@ class SPlayButtonState extends State<SPlayButton> {
     super.dispose();
   }
 
-  // void playbutton(PlayerState state) async {
-  //   StoreProvider.of<PlayerState>(context).dispatch(
-  //     AudioPlaying(!state.playing, state.currentDuration),
-  //   );
-
-  //   if (state.playing) {
-  //     state.advancedPlayer.resume();
-  //     state.advancedPlayer.seek(Duration(milliseconds: state.currentDuration));
-  //   } else {
-  //     state.advancedPlayer.pause().catchError((onError) {
-  //       print("SOMTHING WRONG:$onError");
-  //       state.advancedPlayer.release();
-  //     });
-  //   }
-  // }
-
   Map darkMode(bool darkmode) {
     if (darkmode) {
       return {
@@ -78,7 +62,7 @@ class SPlayButtonState extends State<SPlayButton> {
     }
   }
 
-  Widget playing(PlayerState state) {
+  Widget playing(MainState state) {
     return CircularPercentIndicator(
       radius: 60,
       lineWidth: 2.0,
@@ -113,7 +97,7 @@ class SPlayButtonState extends State<SPlayButton> {
     );
   }
 
-  Widget pause(PlayerState state) {
+  Widget pause(MainState state) {
     percent = 0.0;
     return AnimatedContainer(
       duration: Duration(milliseconds: 50),
@@ -144,11 +128,11 @@ class SPlayButtonState extends State<SPlayButton> {
 
   @override
   Widget build(BuildContext context) {
-    return new StoreConnector<PlayerState, PlayerState>(
+    return new StoreConnector<MainState, MainState>(
       converter: (store) => store.state,
       onWillChange: (state) {
         // if (!state.playing && state.fullPlayerDispose) {
-        //   StoreProvider.of<PlayerState>(context).dispatch(ChangeSong(btn: 0));
+        //   StoreProvider.of<MainState>(context).dispatch(ChangeSong(btn: 0));
         //   setState(() {
         //     skewX = 0;
         //     leftMargin = 0;
@@ -169,7 +153,7 @@ class SPlayButtonState extends State<SPlayButton> {
                   onTap: () => code.playbutton(context, state),
                   onHorizontalDragEnd: (details) {
                     var isLeft = state.prevbuttonPress;
-                    StoreProvider.of<PlayerState>(context)
+                    StoreProvider.of<MainState>(context)
                         .dispatch(ChangeSong(btn: 0));
                     setState(() {
                       skewX = 0;
@@ -193,7 +177,7 @@ class SPlayButtonState extends State<SPlayButton> {
                           leftMargin = 10;
                           dragging = true;
                         });
-                        StoreProvider.of<PlayerState>(context)
+                        StoreProvider.of<MainState>(context)
                             .dispatch(ChangeSong(btn: 1));
                       } else {
                         print("Dragging in -X direction");
@@ -202,7 +186,7 @@ class SPlayButtonState extends State<SPlayButton> {
                           rightMargin = 10;
                           dragging = true;
                         });
-                        StoreProvider.of<PlayerState>(context)
+                        StoreProvider.of<MainState>(context)
                             .dispatch(ChangeSong(btn: -1));
                       }
                     }
@@ -211,7 +195,7 @@ class SPlayButtonState extends State<SPlayButton> {
                   onVerticalDragCancel: () => print("Dragged Cancel"),
                   onVerticalDragEnd: (details) {
                     print("Dragged End");
-                    // StoreProvider.of<PlayerState>(context)
+                    // StoreProvider.of<MainState>(context)
                     //     .dispatch(VolumeC(false, state.volume));
                     setState(() {
                       bottomMargin = 0;
@@ -236,7 +220,7 @@ class SPlayButtonState extends State<SPlayButton> {
                           topMargin = 25;
                         },
                       );
-                      // StoreProvider.of<PlayerState>(context)
+                      // StoreProvider.of<MainState>(context)
                       //     .dispatch(VolumeC(true, state.volume - 1));
                       // setVol((((state.volume - 1) / 100) * 15).toInt());
                     } else {
@@ -246,7 +230,7 @@ class SPlayButtonState extends State<SPlayButton> {
                         bottomMargin = 25;
                       });
 
-                      // StoreProvider.of<PlayerState>(context)
+                      // StoreProvider.of<MainState>(context)
                       //     .dispatch(VolumeC(true, state.volume + 1));
                       // setVol((((state.volume + 1) / 100) * 15).toInt());
                     }

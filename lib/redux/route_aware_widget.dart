@@ -38,7 +38,7 @@ class RouteAwareWidgetState extends State<RouteAwareWidget> with RouteAware {
   @override
   void didPopNext() {
     // Covering route was popped off the navigator.
-    StoreProvider.of<PlayerState>(context).dispatch(NavigateToAction.pop());
+    StoreProvider.of<MainState>(context).dispatch(NavigateToAction.pop());
   }
 
   @override

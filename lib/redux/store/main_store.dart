@@ -1,14 +1,28 @@
-import 'dart:async';
-
 import 'package:audioplayers/audioplayers.dart';
 import 'package:audioplayers/audio_cache.dart';
+import 'package:days_of_sweat/src/screen/Calender/DayModel.dart';
 import 'package:days_of_sweat/src/screen/Database/PlayList.dart';
 import 'package:days_of_sweat/src/screen/MusicPlayer/Local/common/song.dart';
+import 'package:days_of_sweat/src/screen/common/ReusableCode.dart';
 
 import 'package:flutter/material.dart';
-import 'package:json_annotation/json_annotation.dart';
 
-class PlayerState {
+class MainState {
+  ///////////////////////////////////////////////
+  //                                          //
+  //             CALENDER STATE               //
+  /////////////////////////////////////////////
+  List<DayModel> calenderlist = [];
+  int calenderSelectedIndex = -1;
+  int monthIndex = -1;
+  int yearIndex = -1;
+  List year = ResusableCode().positiveIntegers.skip(1).take(30).toList();
+  var finish = [];
+  List<Widget> generatedCalenderList = [];
+  ///////////////////////////////////////////////
+  //                                          //
+  //             PLAYERSTATE                  //
+  /////////////////////////////////////////////
   bool playing = false;
   bool nextbuttonPress = false;
   bool prevbuttonPress = false;
@@ -17,7 +31,7 @@ class PlayerState {
   int volume = 100;
 
   bool fullPlayerDispose = false;
-  int counter = 0;
+  int counter = -1;
   AudioPlayer advancedPlayer = new AudioPlayer();
   AudioCache audioCache = new AudioCache();
 
@@ -71,10 +85,14 @@ class PlayerState {
       "prevBtn": this.prevbuttonPress,
       "volumeBarVisible": this.volumeBarVisible,
       "volume": this.volume,
+      "monthIndex": this.monthIndex,
+      "yearIndex": this.yearIndex,
       // 'SongList': this.songlist.toString(),
       // "ShuffleList": this.playList[0].toString(),
       "currentAlbumIndex": this.currentAlbumIndex,
       "index": this.index,
+      "calenderlist": this.calenderlist.toString(),
+      "calenderlistLength": this.calenderlist.length,
       // "artistList": this.artistList.toString(),
       //"artistSongList": this.artistSongList.toString(),
     };
